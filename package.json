@@ -1,27 +1,28 @@
 {
   "name": "nodejs-jdbc",
   "version": "0.0.1",
-  "description": "Node Module JDBC wrapper",
+  "description": "JDBC wrapper for Node",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "/dist"
   ],
-  "license": "AGPL-version-3.0",
+  "license": "MIT",
+  "readmeFilename": "README.md",
   "private": false,
   "engines": {
     "node": ">= 14.0.0",
     "npm": ">= 6.0.0"
   },
-  "homepage": "",
+  "homepage": "https://github.com/pueteam/nodejs-jdbc",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/pueteam/nodejs-jdbc"
   },
-  "bugs": "",
-  "keywords": [],
+  "bugs": "https://github.com/pueteam/nodejs-jdbc/issues",
+  "keywords": ["jdbc","node","java","wrapper"],
   "author": {
-    "name": "",
+    "name": "Sergio Rodriguez de Guzman",
     "email": "sergio@pue.es",
     "url": "https://github.com/pueteam/nodejs-jdbc"
   },
