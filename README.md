@@ -10,7 +10,7 @@ to follow a more modern way of doing things.
 
 ## Latest Version
 
-- 0.0.4
+- 0.0.5
 
 ## Installation
 
@@ -243,7 +243,7 @@ rs = await statement.executeUpdate("CREATE TABLE blah "
 
 // Insert values
 rs = await statement.executeUpdate("INSERT INTO blah "
-                                  + "VALUES (1, 'Jason', CURRENT_DATE, "
+                                  + "VALUES (1, 'April', CURRENT_DATE, "
                                   + "CURRENT_TIME, CURRENT_TIMESTAMP);");
 
 // Update

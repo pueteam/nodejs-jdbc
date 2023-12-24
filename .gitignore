@@ -37,3 +37,5 @@ lerna-debug.log*
 bun.lockb
 sample.db
 .nvmrc
+tests/impala.test.ts
+drivers/ImpalaJDBC42.jar

@@ -150,24 +150,20 @@ export class ResultSet {
                 if (type === 'BigDecimal') type = 'Double';
                 const getter = `get${type}Sync`;
 
-                if (
-                  type === 'Date' ||
-                  type === 'Time' ||
-                  type === 'Timestamp'
-                ) {
-                  const dateVal = self._rs[getter](cmd.label);
-                  result[cmd.label] = dateVal ? dateVal.toString() : null;
-                } else {
-                  // If the column is an integer and is null, set result to null and continue
-                  if (
-                    type === 'Int' &&
-                    isNull(self._rs.getObjectSync(cmd.label))
-                  ) {
-                    result[cmd.label] = null;
-                    return;
+                switch (type) {
+                  case 'Date':
+                  case 'Time':
+                  case 'Timestamp': {
+                    const dateVal = self._rs[getter](cmd.label);
+                    result[cmd.label] = dateVal ? dateVal.toString() : null;
+                    break;
                   }
-
-                  result[cmd.label] = self._rs[getter](cmd.label);
+                  case isNull(self._rs.getObjectSync(cmd.label)) && 'Int':
+                    result[cmd.label] = null;
+                    break;
+                  default:
+                    result[cmd.label] = self._rs[getter](cmd.label);
+                    break;
                 }
               }
 
