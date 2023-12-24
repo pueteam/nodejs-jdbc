@@ -98,7 +98,7 @@ await db.release(connobj);
 - **Fully Wrapped Connection API**
 
 The Java Connection API is almost completely wrapped.  See
-[connection.ts](https://github.com/pueteam/nodejs-jdbc/blob/master/src/connection.ts)
+[connection.ts](https://github.com/pueteam/nodejs-jdbc/blob/main/src/connection.ts)
 for a the class methods.
 
 - **ResultSet processing separated from statement execution**
@@ -239,24 +239,24 @@ let rs = await statement.executeQuery(sql);
 // Create a table
 rs = await statement.executeUpdate("CREATE TABLE blah "
                                   + "(id int, name varchar(10), date DATE, "
-                                  + " time TIME, timestamp TIMESTAMP);";
+                                  + " time TIME, timestamp TIMESTAMP);");
 
 // Insert values
 rs = await statement.executeUpdate("INSERT INTO blah "
                                   + "VALUES (1, 'Jason', CURRENT_DATE, "
-                                  + "CURRENT_TIME, CURRENT_TIMESTAMP);";
+                                  + "CURRENT_TIME, CURRENT_TIMESTAMP);");
 
 // Update
 rs = await statement.executeUpdate("UPDATE blah "
                                   + "SET id = 2 "
-                                  + "WHERE name = 'April';";
+                                  + "WHERE name = 'April';");
 
 // Delete
 rs = await statement.executeUpdate("DELETE FROM blah "
-                                  + "WHERE id = 2;";
+                                  + "WHERE id = 2;");
 
 // Drop
-rs = await statement.executeUpdate("DROP TABLE blah;";
+rs = await statement.executeUpdate("DROP TABLE blah;");
 
 // Release the connection from the pool
 await db.release(connobj);
