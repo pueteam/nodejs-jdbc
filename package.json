@@ -1,6 +1,6 @@
 {
   "name": "nodejs-jdbc",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "JDBC wrapper for Node",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,7 +17,7 @@
   "homepage": "https://github.com/pueteam/nodejs-jdbc",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pueteam/nodejs-jdbc"
+    "url": "git+https://github.com/pueteam/nodejs-jdbc.git"
   },
   "bugs": "https://github.com/pueteam/nodejs-jdbc/issues",
   "keywords": ["jdbc","node","java","wrapper"],

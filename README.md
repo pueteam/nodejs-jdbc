@@ -10,7 +10,7 @@ to follow a more modern way of doing things.
 
 ## Latest Version
 
-- 0.0.2
+- 0.0.4
 
 ## Installation
 
