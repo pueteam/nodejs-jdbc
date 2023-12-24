@@ -1,6 +1,6 @@
+import { getInstance, isJvmCreated, addOption } from './jinst';
 import { ResultSetMetaData } from './resultsetmetadata';
 import { isNull } from './helper';
-import { getInstance, isJvmCreated, addOption } from './jinst';
 
 const java = getInstance();
 
@@ -9,13 +9,12 @@ if (!isJvmCreated()) {
 }
 
 export class ResultSet {
-  private rs: any;
-  private holdability: any;
-  private types: any;
-
-  constructor(rs: any) {
-    this.rs = rs;
-    this.holdability = (function () {
+  _rs: any;
+  _holdability: any[];
+  _types: any[];
+  constructor(rs) {
+    this._rs = rs;
+    this._holdability = (function () {
       const h = [];
 
       h[
@@ -33,7 +32,7 @@ export class ResultSet {
 
       return h;
     })();
-    this.types = (function () {
+    this._types = (function () {
       const typeNames = [];
 
       typeNames[java.getStaticFieldValue('java.sql.Types', 'BIT')] = 'Boolean';
@@ -78,7 +77,7 @@ export class ResultSet {
       return typeNames;
     })();
   }
-  toObjArray(): Promise<any> {
+  toObjArray() {
     return new Promise((resolve, reject) => {
       this.toObject((err, result) => {
         if (err) return reject(err);
@@ -104,7 +103,9 @@ export class ResultSet {
     });
   }
   toObjectIter(callback) {
-    this.getMetaData((err, rsmd) => {
+    const self = this;
+
+    self.getMetaData((err, rsmd) => {
       if (err) {
         return callback(err);
       }
@@ -118,8 +119,8 @@ export class ResultSet {
         // Get some column metadata.
         for (let i = 1; i <= colcount; i++) {
           colsmetadata.push({
-            label: rsmd.rsmd.getColumnLabelSync(i),
-            type: rsmd.rsmd.getColumnTypeSync(i),
+            label: rsmd._rsmd.getColumnLabelSync(i),
+            type: rsmd._rsmd.getColumnTypeSync(i),
           });
         }
 
@@ -128,9 +129,9 @@ export class ResultSet {
           types: colsmetadata.map((col) => col.type),
           rows: {
             next() {
-              let nextRow: any;
+              let nextRow;
               try {
-                nextRow = this.rs.nextSync(); // this row can lead to Java RuntimeException - sould be cathced.
+                nextRow = self._rs.nextSync(); // this row can lead to Java RuntimeException - sould be cathced.
               } catch (error) {
                 callback(error);
               }
@@ -145,7 +146,7 @@ export class ResultSet {
               // loop through each column
               for (let i = 1; i <= colcount; i++) {
                 const cmd = colsmetadata[i - 1];
-                let type = this.types[cmd.type] || 'String';
+                let type = self._types[cmd.type] || 'String';
                 if (type === 'BigDecimal') type = 'Double';
                 const getter = `get${type}Sync`;
 
@@ -154,19 +155,19 @@ export class ResultSet {
                   type === 'Time' ||
                   type === 'Timestamp'
                 ) {
-                  const dateVal = this.rs[getter](cmd.label);
+                  const dateVal = self._rs[getter](cmd.label);
                   result[cmd.label] = dateVal ? dateVal.toString() : null;
                 } else {
                   // If the column is an integer and is null, set result to null and continue
                   if (
                     type === 'Int' &&
-                    isNull(this.rs.getObjectSync(cmd.label))
+                    isNull(self._rs.getObjectSync(cmd.label))
                   ) {
                     result[cmd.label] = null;
                     return;
                   }
 
-                  result[cmd.label] = this.rs[getter](cmd.label);
+                  result[cmd.label] = self._rs[getter](cmd.label);
                 }
               }
 
@@ -181,7 +182,7 @@ export class ResultSet {
     });
   }
   close(callback) {
-    this.rs.close((err) => {
+    this._rs.close((err) => {
       if (err) {
         return callback(err);
       }
@@ -189,7 +190,7 @@ export class ResultSet {
     });
   }
   getMetaData(callback) {
-    this.rs.getMetaData((err, rsmd) => {
+    this._rs.getMetaData((err, rsmd) => {
       if (err) {
         return callback(err);
       }

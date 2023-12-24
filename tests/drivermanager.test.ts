@@ -1,5 +1,15 @@
-import { getConnection } from '../src/drivermanager';
-import { isJvmCreated, addOption, setupClasspath } from '../src/jinst';
+import {
+  getConnection,
+  getConnectionSync,
+  getLoginTimeout,
+  setLoginTimeout,
+} from '../src/drivermanager';
+import {
+  isJvmCreated,
+  addOption,
+  setupClasspath,
+  getInstance,
+} from '../src/jinst';
 
 const config = {
   url: 'jdbc:sqlite:sample.db',
@@ -8,15 +18,19 @@ const config = {
   drivername: 'org.sqlite.JDBC',
 };
 
-if (!isJvmCreated()) {
-  addOption('-Xrs');
-  setupClasspath([
-    './drivers/sqlite-jdbc.jar',
-    './drivers/slf4j-api-1.7.36.jar',
-  ]);
-}
+const java = getInstance();
 
 describe('DriverManager', () => {
+  beforeAll(() => {
+    if (!isJvmCreated()) {
+      addOption('-Xrs');
+      setupClasspath([
+        './drivers/sqlite-jdbc.jar',
+        './drivers/slf4j-api-1.7.36.jar',
+      ]);
+    }
+  });
+
   it('should be able to get a connection', () => {
     getConnection(config.url, config.user, (err, conn) => {
       expect(conn).toBeDefined();
@@ -24,7 +38,6 @@ describe('DriverManager', () => {
     });
   });
 
-  /*
   it('should be able to get a connection with properties', () => {
     const Properties = java.import('java.util.Properties');
     const props = new Properties();
@@ -59,7 +72,7 @@ describe('DriverManager', () => {
       expect(seconds).toBeDefined();
     });
   });
-
+  /*
   it('should be able to register a driver', () => {
     const driver = 'org.sqlite.JDBC';
     registerDriver(driver, (err, result) => {
@@ -67,5 +80,5 @@ describe('DriverManager', () => {
       expect(err).toBeNull();
     });
   });
-  */
+*/
 });

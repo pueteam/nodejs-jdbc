@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events';
 import winston from 'winston';
-// import { onJvmCreated, options, classpath, newInstanceSync } from 'java';
 import * as java from 'java';
 
 const { error } = winston;
@@ -33,6 +32,10 @@ export function setupClasspath(dependencyArr) {
     );
     error('You can test for a running JVM with the isJvmCreated funtion.');
   }
+}
+
+export async function shutdownJVM() {
+  await java.callStaticMethodSync('java.lang.System', 'exit', 0);
 }
 
 export function getInstance() {

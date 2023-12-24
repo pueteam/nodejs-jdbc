@@ -1,12 +1,11 @@
 export class ResultSetMetaData {
-  public rsmd: any;
-
-  constructor(rsmd: any) {
-    this.rsmd = rsmd;
+  public _rsmd: any;
+  constructor(rsmd) {
+    this._rsmd = rsmd;
   }
 
   getColumnCount(callback) {
-    this.rsmd.getColumnCount((err, count) => {
+    this._rsmd.getColumnCount((err, count) => {
       try {
         if (err) {
           return callback(err);
@@ -19,7 +18,7 @@ export class ResultSetMetaData {
   }
 
   getColumnName(column, callback) {
-    this.rsmd.getColumnName(column, (err, name) => {
+    this._rsmd.getColumnName(column, (err, name) => {
       try {
         if (err) {
           return callback(err);
