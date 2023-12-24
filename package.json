@@ -28,9 +28,14 @@
   },
   "contributors": [],
   "scripts": {
-    "dev": "",
+    "ci": "npx tsc -p tsconfig-build.json",
     "build": "npx tsc -p tsconfig-build.json",
-    "test": "jest --runInBand"
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
