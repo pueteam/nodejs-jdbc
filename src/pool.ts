@@ -7,6 +7,7 @@ import {
   getConnectionSync,
   registerDriver,
 } from './drivermanager';
+import { DataSource } from './datasource';
 import { Connection } from './connection';
 
 const java = getInstance();
@@ -15,61 +16,44 @@ if (!isJvmCreated()) {
   addOption('-Xrs');
 }
 
-const keepalive = function (conn, query) {
-  conn.createStatement((err, statement) => {
-    if (err) return winston.error(err);
-    statement.execute(query, (err) => {
-      if (err) return winston.error(err);
-      winston.silly('%s - Keep-Alive', new Date().toUTCString());
-    });
-  });
-};
-
-const addConnection = function (url, props, ka, maxIdle, callback) {
-  getConnection(url, props, (err, conn) => {
-    if (err) {
-      return callback(err);
-    }
-    const connobj = {
-      uuid: v4(),
-      conn: new Connection(conn),
-      keepalive: ka.enabled
-        ? setInterval(keepalive, ka.interval, conn, ka.query)
-        : false,
-      lastIdle: maxIdle ? new Date().getTime() : null,
-    };
-
-    return callback(null, connobj);
-  });
-};
-
-const addConnectionSync = function (url, props, ka, maxIdle) {
-  const conn = getConnectionSync(url, props);
-  const connobj = {
-    uuid: v4(),
-    conn: new Connection(conn),
-    keepalive: ka.enabled
-      ? setInterval(keepalive, ka.interval, conn, ka.query)
-      : false,
-    lastIdle: maxIdle ? new Date().getTime() : null,
-  };
-
-  return connobj;
-};
+function isDS(drivername: string) {
+  return drivername.toLowerCase().includes('datasource');
+}
 
 export class Pool {
-  url: any;
+  url: string;
+  user: string;
+  password: string;
   props: any;
-  drivername: any;
-  minpoolsize: any;
-  maxpoolsize: any;
-  keepalive: any;
-  maxidle: any;
+  drivername: string;
+  minpoolsize: number;
+  maxpoolsize: number;
+  keepalive: {
+    interval: number;
+    query: string;
+    enabled: boolean;
+  };
+  maxidle: number;
   logging: any;
   pool: any;
   reserved: any;
 
-  constructor(config) {
+  constructor(config: {
+    url: any;
+    user?: string;
+    password?: string;
+    drivername?: string;
+    minpoolsize?: number;
+    maxpoolsize?: number;
+    maxidle?: number;
+    properties?: object;
+    keepalive?: {
+      interval: number;
+      query: string;
+      enabled: boolean;
+    };
+    logging?: any;
+  }) {
     this.url = config.url;
     this.props = (function (config) {
       const Properties = java.import('java.util.Properties');
@@ -92,6 +76,8 @@ export class Pool {
 
       return properties;
     })(config);
+    this.user = config.user ? config.user : '';
+    this.password = config.password ? config.password : '';
     this.drivername = config.drivername ? config.drivername : '';
     this.minpoolsize = config.minpoolsize ? config.minpoolsize : 1;
     this.maxpoolsize = config.maxpoolsize ? config.maxpoolsize : 1;
@@ -121,20 +107,97 @@ export class Pool {
       return resolve(status);
     });
   }
+
+  keepaliveConnection(conn, query) {
+    conn.createStatement((err, statement) => {
+      if (err) return winston.error(err);
+      statement.execute(query, (err) => {
+        if (err) return winston.error(err);
+        winston.silly('%s - Keep-Alive', new Date().toUTCString());
+      });
+    });
+  }
+
+  addConnection(callback) {
+    if (isDS(this.drivername)) {
+      const conn = new DataSource(
+        this.drivername,
+        this.url,
+        this.user,
+        this.password,
+      ).getConnectionDS();
+      const connobj = {
+        uuid: v4(),
+        conn: new Connection(conn),
+        keepalive: this.keepalive.enabled
+          ? setInterval(
+              this.keepaliveConnection,
+              this.keepalive.interval,
+              conn,
+              this.keepalive.query,
+            )
+          : false,
+        lastIdle: this.maxidle ? new Date().getTime() : null,
+      };
+
+      return callback(null, connobj);
+    }
+    getConnection(this.url, this.props, (err, conn) => {
+      if (err) {
+        return callback(err);
+      }
+      const connobj = {
+        uuid: v4(),
+        conn: new Connection(conn),
+        keepalive: this.keepalive.enabled
+          ? setInterval(
+              this.keepaliveConnection,
+              this.keepalive.interval,
+              conn,
+              this.keepalive.query,
+            )
+          : false,
+        lastIdle: this.maxidle ? new Date().getTime() : null,
+      };
+
+      return callback(null, connobj);
+    });
+  }
+
+  addConnectionSync() {
+    const conn = isDS(this.drivername)
+      ? new DataSource(
+          this.drivername,
+          this.url,
+          this.user,
+          this.password,
+        ).getConnectionDS()
+      : getConnectionSync(this.url, this.props);
+    const connobj = {
+      uuid: v4(),
+      conn: new Connection(conn),
+      keepalive: this.keepalive.enabled
+        ? setInterval(
+            this.keepaliveConnection,
+            this.keepalive.interval,
+            conn,
+            this.keepalive.query,
+          )
+        : false,
+      lastIdle: this.maxidle ? new Date().getTime() : null,
+    };
+
+    return connobj;
+  }
+
   _addConnectionsOnInitialize() {
     return new Promise((resolve, reject) => {
       times(
         this.minpoolsize,
         (n, next) => {
-          addConnection(
-            this.url,
-            this.props,
-            this.keepalive,
-            this.maxidle,
-            (err, conn) => {
-              next(err, conn);
-            },
-          );
+          this.addConnection((err, conn) => {
+            next(err, conn);
+          });
         },
         (err, conns) => {
           if (err) {
@@ -153,7 +216,7 @@ export class Pool {
 
     // If a drivername is supplied, initialize the via the old method,
     // Class.forName()
-    if (this.drivername) {
+    if (this.drivername && !isDS(this.drivername)) {
       java.newInstance(this.drivername, (err, driver) => {
         if (err) {
           return callback(err);
@@ -186,12 +249,7 @@ export class Pool {
         this.reserved.unshift(conn);
       } else if (this.reserved.length < this.maxpoolsize) {
         try {
-          conn = addConnectionSync(
-            this.url,
-            this.props,
-            this.keepalive,
-            this.maxidle,
-          );
+          conn = this.addConnectionSync();
           this.reserved.unshift(conn);
         } catch (err) {
           winston.error(err);

@@ -10,7 +10,8 @@ to follow a more modern way of doing things.
 
 ## Latest Version
 
-- 0.0.5
+- 0.0.6
+Added support for DataSource
 
 ## Installation
 
@@ -197,6 +198,32 @@ const db = new JDBC(config);
 
 // Initialize the pool
 await db.initialize();
+```
+
+### Use DataSource instead of DriverManager (recommended)
+
+The reason why Connection Pools (and therefore DataSources) are recommended in multi-user applications (such as webapps) is that when you use a DriverManager to obtain a Connection, it has to build the connection completely from scratch, including the fairly tedious job of opening a network connection to the database. A Connection Pool, on the other hand, recycles Connections. The actual Connection object that the DataSource returns is, in fact, a façade object, where the Connection close() method has been replaced by code that returns the Connection to the pool for re-use instead of simply destroying it like the "real" Connection would. So you don't have to create everything from scratch every time you need a connection.
+
+From this module perspective it is a quite simple setup. Just specify the **drivername** (mandatory) property referencing the DataSource class:
+
+```javascript
+import { JDBC, isJvmCreated, addOption, setupClasspath } from 'nodejs-jdbc';
+
+if (!isJvmCreated()) {
+  addOption("-Xrs");
+  setupClasspath(['./drivers/ImpalaJDBC42.jar']);
+}
+
+const config = {
+  url: `jdbc:impala://host:port/sgpc;AuthMech=3;UID=user;PWD=password;`,
+  minpoolsize: 1,
+  maxpoolsize: 3,
+  maxidle: 50 * 60 * 1000,
+  // user: 'user', // the driver must support setUser method. If not, use the url
+  // password: 'password', // the driver must support setPassword method. If not, use the url
+  drivername: 'com.cloudera.impala.jdbc.DataSource',
+  properties: {},
+};
 ```
 
 ### Reserve Connection, Execute Queries, Release Connection
