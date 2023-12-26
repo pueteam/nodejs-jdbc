@@ -1,9 +1,7 @@
-import winston from 'winston';
 import { ResultSet } from './resultset';
 import { ResultSetMetaData } from './resultsetmetadata';
 import { Statement } from './statement';
-
-const { error } = winston;
+import { logger } from './helper';
 
 export class PreparedStatement {
   private ps: Statement;
@@ -26,7 +24,7 @@ export class PreparedStatement {
   execute(callback) {
     this.ps.execute('', (err, result) => {
       if (err) {
-        error(err);
+        logger.error(err);
         return callback(err);
       }
       callback(null, result);
@@ -35,7 +33,7 @@ export class PreparedStatement {
   executeBatch(callback) {
     this.ps.executeBatch((err, result) => {
       if (err) {
-        error(err);
+        logger.error(err);
         return callback(err);
       }
       callback(null, result);
@@ -45,7 +43,7 @@ export class PreparedStatement {
     return new Promise((resolve, reject) => {
       this.ps.executeQuery((err, resultset) => {
         if (err) {
-          error(err);
+          logger.error(err);
           return reject(err);
         }
         return resolve(new ResultSet(resultset));
@@ -56,7 +54,7 @@ export class PreparedStatement {
     return new Promise((resolve, reject) => {
       this.ps.executeUpdate((err, result) => {
         if (err) {
-          error(err);
+          logger.error(err);
           return reject(err);
         }
         return resolve(result);

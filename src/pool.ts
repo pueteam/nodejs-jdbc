@@ -1,6 +1,6 @@
 import { times, each as _each } from 'async';
 import { v4 } from 'uuid';
-import * as winston from 'winston';
+import { logger } from './helper';
 import { getInstance, isJvmCreated, addOption, events } from './jinst';
 import {
   getConnection,
@@ -110,10 +110,10 @@ export class Pool {
 
   keepaliveConnection(conn, query) {
     conn.createStatement((err, statement) => {
-      if (err) return winston.error(err);
+      if (err) return logger.error(err);
       statement.execute(query, (err) => {
-        if (err) return winston.error(err);
-        winston.silly('%s - Keep-Alive', new Date().toUTCString());
+        if (err) return logger.error(err);
+        logger.silly('%s - Keep-Alive', new Date().toUTCString());
       });
     });
   }
@@ -212,7 +212,7 @@ export class Pool {
     });
   }
   initialize(callback) {
-    // winston.level = this.logging.level;
+    logger.level = this.logging.level;
 
     // If a drivername is supplied, initialize the via the old method,
     // Class.forName()
@@ -252,7 +252,7 @@ export class Pool {
           conn = this.addConnectionSync();
           this.reserved.unshift(conn);
         } catch (err) {
-          winston.error(err);
+          logger.error(err);
           conn = null;
           return reject(err);
         }

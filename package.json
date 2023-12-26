@@ -20,7 +20,12 @@
     "url": "git+https://github.com/pueteam/nodejs-jdbc.git"
   },
   "bugs": "https://github.com/pueteam/nodejs-jdbc/issues",
-  "keywords": ["jdbc","node","java","wrapper"],
+  "keywords": [
+    "jdbc",
+    "node",
+    "java",
+    "wrapper"
+  ],
   "author": {
     "name": "Sergio Rodriguez de Guzman",
     "email": "sergio@pue.es",

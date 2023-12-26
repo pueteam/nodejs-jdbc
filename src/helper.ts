@@ -1,3 +1,11 @@
+import * as winston from 'winston';
+
+export const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [new winston.transports.Console()],
+});
+
 export function isNumber(value: any) {
   return typeof value === 'number';
 }
@@ -28,10 +36,6 @@ export function isBoolean(value: any) {
 
 export function isSymbol(value: any) {
   return typeof value === 'symbol';
-}
-
-export function isPromise(value: any) {
-  return isObject(value) && isFunction(value.then) && isFunction(value.catch);
 }
 
 export function isDate(value: any) {

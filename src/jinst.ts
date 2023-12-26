@@ -1,8 +1,6 @@
-import { EventEmitter } from 'events';
-import winston from 'winston';
+import { EventEmitter } from 'node:events';
 import * as java from 'java';
-
-const { error } = winston;
+import { logger } from './helper';
 
 export function isJvmCreated() {
   return typeof java.onJvmCreated !== 'function';
@@ -12,11 +10,13 @@ export function addOption(option) {
   if (!isJvmCreated() && option) {
     java.options.push(option);
   } else if (isJvmCreated()) {
-    error("You've tried to add an option to an already running JVM!");
-    error(
+    logger.error("You've tried to add an option to an already running JVM!");
+    logger.error(
       "This isn't currently supported.  Please add all option entries before calling any java methods",
     );
-    error('You can test for a running JVM with the isJvmCreated funtion.');
+    logger.error(
+      'You can test for a running JVM with the isJvmCreated funtion.',
+    );
   }
 }
 
@@ -24,13 +24,15 @@ export function setupClasspath(dependencyArr) {
   if (!isJvmCreated() && dependencyArr) {
     java.classpath.push(...dependencyArr);
   } else if (isJvmCreated()) {
-    error(
+    logger.error(
       "You've tried to add an entry to the classpath of an already running JVM!",
     );
-    error(
+    logger.error(
       "This isn't currently supported.  Please add all classpath entries before calling any java methods",
     );
-    error('You can test for a running JVM with the isJvmCreated funtion.');
+    logger.error(
+      'You can test for a running JVM with the isJvmCreated funtion.',
+    );
   }
 }
 
