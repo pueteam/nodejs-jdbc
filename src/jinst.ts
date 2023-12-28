@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 import * as java from 'java';
-import { logger } from './helper';
+import { logger } from './Helper';
 
 export function isJvmCreated() {
   return typeof java.onJvmCreated !== 'function';

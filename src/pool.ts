@@ -1,14 +1,14 @@
 import { times, each as _each } from 'async';
 import { v4 } from 'uuid';
-import { logger } from './helper';
+import { logger } from './Helper';
 import { getInstance, isJvmCreated, addOption, events } from './jinst';
 import {
   getConnection,
   getConnectionSync,
   registerDriver,
-} from './drivermanager';
-import { DataSource } from './datasource';
-import { Connection } from './connection';
+} from './DriverManager';
+import { DataSource } from './DataSource';
+import { Connection } from './Connection';
 
 const java = getInstance();
 

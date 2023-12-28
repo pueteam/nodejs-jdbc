@@ -10,7 +10,7 @@ import {
   isDate,
   isInteger,
   isNull,
-} from '../src/helper';
+} from '../src/Helper';
 
 describe('Helper functions', () => {
   it('should return true if value is a number', () => {

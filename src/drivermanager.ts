@@ -1,4 +1,4 @@
-import { isObject, isString } from './helper';
+import { isObject, isString } from './Helper';
 import { getInstance } from './jinst';
 
 const java = getInstance();

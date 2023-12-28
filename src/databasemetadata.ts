@@ -1,5 +1,5 @@
-import { ResultSet } from './resultset';
-import { Connection } from './connection';
+import { ResultSet } from './ResultSet';
+import { Connection } from './Connection';
 import { getInstance, events } from './jinst';
 import {
   isArray,
@@ -9,7 +9,7 @@ import {
   isNull,
   isString,
   isUndefined,
-} from './helper';
+} from './Helper';
 
 const java = getInstance();
 

@@ -3,7 +3,7 @@ import {
   getConnectionSync,
   getLoginTimeout,
   setLoginTimeout,
-} from '../src/drivermanager';
+} from '../src/DriverManager';
 import {
   isJvmCreated,
   addOption,

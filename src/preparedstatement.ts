@@ -4,10 +4,10 @@ import { Statement } from './statement';
 import { logger } from './helper';
 
 export class PreparedStatement {
-  private ps: Statement;
+  private ps: any;
 
   constructor(ps: any) {
-    this.ps = new Statement(ps);
+    this.ps = new PreparedStatement(ps);
   }
   addBatch(callback) {
     this.ps.addBatch('', (err) => {

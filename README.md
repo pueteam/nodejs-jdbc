@@ -8,7 +8,10 @@ This module is based on [node-jdbc](https://github.com/CraZySacX/node-jdbc/tree/
 adapted to the new Java versions, ESM and Typescript. It tries to be as compatible as possible, but it diverges
 to follow a more modern way of doing things.
 
-## Latest Version
+## Latests Version
+
+- 0.0.7
+Fixes winston transport
 
 - 0.0.6
 Added support for DataSource

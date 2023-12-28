@@ -69,18 +69,14 @@ export class Statement {
     });
   }
 
-  executeQuery(sql) {
+  executeQuery(sql: string) {
     return new Promise((resolve, reject) => {
-      if (typeof sql === 'string') {
-        this.s.executeQuery(sql, (err, resultset) => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve(new ResultSet(resultset));
-        });
-      } else {
-        return reject(new Error('INVALID ARGUMENTS'));
-      }
+      this.s.executeQuery(sql, (err, resultset) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(new ResultSet(resultset));
+      });
     });
   }
 
