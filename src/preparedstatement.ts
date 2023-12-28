@@ -1,6 +1,6 @@
-import { ResultSet } from './resultset';
-import { ResultSetMetaData } from './resultsetmetadata';
-import { Statement } from './statement';
+import { ResultSet } from './ResultSet';
+import { ResultSetMetaData } from './ResultSetMetadata';
+import { Statement } from './Statement';
 import { logger } from './helper';
 
 export class PreparedStatement {

@@ -1,5 +1,5 @@
 import { isNumber, isObject, isString, isUndefined } from './helper';
-import { PreparedStatement } from './preparedstatement';
+import { PreparedStatement } from './PreparedStatement';
 
 export class CallableStatement {
   private cs: any;

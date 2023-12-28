@@ -1,6 +1,6 @@
-import { ResultSet } from './resultset';
+import { ResultSet } from './ResultSet';
 import { getInstance, events } from './jinst';
-import { isString, isUndefined } from './helper';
+import { isString, isUndefined } from './Helper';
 
 const java = getInstance();
 

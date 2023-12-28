@@ -1,9 +1,9 @@
 import { CallableStatement } from './callablestatement';
 import { getInstance, isJvmCreated, addOption } from './jinst';
-import { PreparedStatement } from './preparedstatement';
-import { Statement } from './statement';
+import { PreparedStatement } from './PreparedStatement';
+import { Statement } from './Statement';
 import { SQLWarning } from './sqlwarning';
-import { DatabaseMetaData } from './databasemetadata';
+import { DatabaseMetaData } from './DatabaseMetaData';
 import {
   isArray,
   isNull,
