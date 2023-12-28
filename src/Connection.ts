@@ -3,7 +3,7 @@ import { getInstance, isJvmCreated, addOption } from './jinst';
 import { PreparedStatement } from './PreparedStatement';
 import { Statement } from './Statement';
 import { SQLWarning } from './sqlwarning';
-import { DatabaseMetaData } from './DatabaseMetaData';
+import { DatabaseMetaData } from './DatabaseMetadata';
 import {
   isArray,
   isNull,
