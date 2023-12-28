@@ -1,4 +1,4 @@
-import { CallableStatement } from './callablestatement';
+import { CallableStatement } from './CallableStatement';
 import { getInstance, isJvmCreated, addOption } from './jinst';
 import { PreparedStatement } from './PreparedStatement';
 import { Statement } from './Statement';
@@ -11,7 +11,7 @@ import {
   isObject,
   isString,
   isUndefined,
-} from './helper';
+} from './Helper';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const java = getInstance();

@@ -1,4 +1,4 @@
-import { isNumber, isObject, isString, isUndefined } from './helper';
+import { isNumber, isObject, isString, isUndefined } from './Helper';
 import { PreparedStatement } from './PreparedStatement';
 
 export class CallableStatement {

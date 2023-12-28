@@ -1,7 +1,7 @@
 import { ResultSet } from './ResultSet';
 import { ResultSetMetaData } from './ResultSetMetadata';
 import { Statement } from './Statement';
-import { logger } from './helper';
+import { logger } from './Helper';
 
 export class PreparedStatement {
   private ps: any;
