@@ -1,5 +1,7 @@
 # nodejs-jdbc
 
+![workflow](https://github.com/pueteam/nodejs-jdbc/actions/workflows/build.yml/badge.svg)
+
 JDBC API Wrapper for node.js
 
 ## Motivation
