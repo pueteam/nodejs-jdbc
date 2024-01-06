@@ -1,5 +1,4 @@
-import { times, each as _each } from 'async';
-import { v4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { logger } from './Helper';
 import { getInstance, isJvmCreated, addOption, events } from './jinst';
 import {
@@ -20,82 +19,86 @@ function isDS(drivername: string) {
   return drivername.toLowerCase().includes('datasource');
 }
 
-export class Pool {
-  url: string;
-  user: string;
-  password: string;
-  props: any;
-  drivername: string;
-  minpoolsize: number;
-  maxpoolsize: number;
-  keepalive: {
+function setProperties(config: IJDBConfig) {
+  const Properties = java.import('java.util.Properties');
+  const properties = new Properties();
+
+  for (const name in config.properties) {
+    properties.putSync(name, config.properties[name]);
+  }
+
+  // NOTE: https://docs.oracle.com/javase/7/docs/api/java/util/Properties.html#getProperty(java.lang.String)
+  // if property does not exist it returns 'null' in the new java version, so we can check to support
+  // older versions as well
+  if (config.user && !properties.getPropertySync('user')) {
+    properties.putSync('user', config.user);
+  }
+
+  if (config.password && !properties.getPropertySync('password')) {
+    properties.putSync('password', config.password);
+  }
+
+  return properties;
+}
+
+export interface ConnObj {
+  uuid: string;
+  conn: Connection;
+  keepalive: boolean;
+  lastIdle: number;
+}
+
+export interface IJDBConfig {
+  url: any;
+  user?: string;
+  password?: string;
+  drivername?: string;
+  minpoolsize?: number;
+  maxpoolsize?: number;
+  maxidle?: number;
+  properties?: object;
+  props?: object;
+  keepalive?: {
     interval: number;
     query: string;
     enabled: boolean;
   };
-  maxidle: number;
-  logging: any;
+  logging?: any;
+}
+
+export class Pool {
+  private config: IJDBConfig;
   pool: any;
   reserved: any;
 
-  constructor(config: {
-    url: any;
-    user?: string;
-    password?: string;
-    drivername?: string;
-    minpoolsize?: number;
-    maxpoolsize?: number;
-    maxidle?: number;
-    properties?: object;
-    keepalive?: {
-      interval: number;
-      query: string;
-      enabled: boolean;
-    };
-    logging?: any;
-  }) {
-    this.url = config.url;
-    this.props = (function (config) {
-      const Properties = java.import('java.util.Properties');
-      const properties = new Properties();
+  constructor(config: IJDBConfig) {
+    this.validateConfig(config);
+    this.pool = [];
+    this.reserved = [];
+  }
 
-      for (const name in config.properties) {
-        properties.putSync(name, config.properties[name]);
-      }
-
-      // NOTE: https://docs.oracle.com/javase/7/docs/api/java/util/Properties.html#getProperty(java.lang.String)
-      // if property does not exist it returns 'null' in the new java version, so we can check to support
-      // older versions as well
-      if (config.user && !properties.getPropertySync('user')) {
-        properties.putSync('user', config.user);
-      }
-
-      if (config.password && !properties.getPropertySync('password')) {
-        properties.putSync('password', config.password);
-      }
-
-      return properties;
-    })(config);
-    this.user = config.user ? config.user : '';
-    this.password = config.password ? config.password : '';
-    this.drivername = config.drivername ? config.drivername : '';
-    this.minpoolsize = config.minpoolsize ? config.minpoolsize : 1;
-    this.maxpoolsize = config.maxpoolsize ? config.maxpoolsize : 1;
-    this.keepalive = config.keepalive
+  validateConfig(config: IJDBConfig) {
+    this.config = config;
+    this.config.props = setProperties(config);
+    this.config.user = config.user ? config.user : '';
+    this.config.password = config.password ? config.password : '';
+    this.config.drivername = config.drivername ? config.drivername : '';
+    this.config.minpoolsize = config.minpoolsize ? config.minpoolsize : 1;
+    this.config.maxpoolsize = config.maxpoolsize ? config.maxpoolsize : 1;
+    this.config.keepalive = config.keepalive
       ? config.keepalive
       : {
           interval: 60000,
           query: 'select 1',
           enabled: false,
         };
-    this.maxidle = (!this.keepalive.enabled && config.maxidle) || null;
-    this.logging = config.logging
+    this.config.maxidle =
+      (!this.config.keepalive.enabled && config.maxidle) || null;
+    this.config.logging = config.logging
       ? config.logging
       : {
           level: 'error',
         };
-    this.pool = [];
-    this.reserved = [];
   }
   status() {
     const status: any = {};
@@ -108,83 +111,89 @@ export class Pool {
     });
   }
 
-  keepaliveConnection(conn, query) {
-    conn.createStatement((err, statement) => {
-      if (err) return logger.error(err);
-      statement.execute(query, (err) => {
-        if (err) return logger.error(err);
-        logger.silly('%s - Keep-Alive', new Date().toUTCString());
+  keepaliveConnection(conn: Connection, query: string) {
+    conn
+      .createStatement()
+      .then((statement) => {
+        statement
+          .execute(query)
+          .then(() => {
+            logger.silly('%s - Keep-Alive', new Date().toUTCString());
+          })
+          .catch((err) => {
+            logger.error(err);
+          });
+      })
+      .catch((error) => {
+        logger.error(error);
       });
-    });
   }
 
-  addConnection(callback) {
-    if (isDS(this.drivername)) {
-      const conn = new DataSource(
-        this.drivername,
-        this.url,
-        this.user,
-        this.password,
-      ).getConnectionDS();
-      const connobj = {
-        uuid: v4(),
-        conn: new Connection(conn),
-        keepalive: this.keepalive.enabled
-          ? setInterval(
-              this.keepaliveConnection,
-              this.keepalive.interval,
-              conn,
-              this.keepalive.query,
-            )
-          : false,
-        lastIdle: this.maxidle ? new Date().getTime() : null,
-      };
+  addConnection(): Promise<any> {
+    return new Promise((resolve) => {
+      if (isDS(this.config.drivername)) {
+        const conn = new DataSource(
+          this.config.drivername,
+          this.config.url,
+          this.config.user,
+          this.config.password,
+        ).getConnectionDS();
+        const connobj = {
+          uuid: uuidv4(),
+          conn: new Connection(conn),
+          keepalive: this.config.keepalive.enabled
+            ? setInterval(
+                this.keepaliveConnection,
+                this.config.keepalive.interval,
+                conn,
+                this.config.keepalive.query,
+              )
+            : false,
+          lastIdle: this.config.maxidle ? new Date().getTime() : null,
+        };
 
-      return callback(null, connobj);
-    }
-    getConnection(this.url, this.props, (err, conn) => {
-      if (err) {
-        return callback(err);
+        return resolve(connobj);
       }
+      const conn = getConnection(this.config.url, this.config.props);
       const connobj = {
-        uuid: v4(),
+        uuid: uuidv4(),
         conn: new Connection(conn),
-        keepalive: this.keepalive.enabled
+        keepalive: this.config.keepalive.enabled
           ? setInterval(
               this.keepaliveConnection,
-              this.keepalive.interval,
+              this.config.keepalive.interval,
               conn,
-              this.keepalive.query,
+              this.config.keepalive.query,
             )
           : false,
-        lastIdle: this.maxidle ? new Date().getTime() : null,
+        lastIdle: this.config.maxidle ? new Date().getTime() : null,
       };
 
-      return callback(null, connobj);
+      return resolve(connobj);
     });
   }
 
   addConnectionSync() {
-    const conn = isDS(this.drivername)
+    const conn = isDS(this.config.drivername)
       ? new DataSource(
-          this.drivername,
-          this.url,
-          this.user,
-          this.password,
+          this.config.drivername,
+          this.config.url,
+          this.config.user,
+          this.config.password,
         ).getConnectionDS()
-      : getConnectionSync(this.url, this.props);
+      : getConnectionSync(this.config.url, this.config.props);
     const connobj = {
-      uuid: v4(),
+      uuid: uuidv4(),
       conn: new Connection(conn),
-      keepalive: this.keepalive.enabled
+      keepalive: this.config.keepalive.enabled
         ? setInterval(
             this.keepaliveConnection,
-            this.keepalive.interval,
+            this.config.keepalive.interval,
             conn,
-            this.keepalive.query,
+            this.config.keepalive.query,
           )
         : false,
-      lastIdle: this.maxidle ? new Date().getTime() : null,
+      lastIdle: this.config.maxidle ? new Date().getTime() : null,
     };
 
     return connobj;
@@ -192,49 +201,39 @@ export class Pool {
 
   _addConnectionsOnInitialize() {
     return new Promise((resolve, reject) => {
-      times(
-        this.minpoolsize,
-        (n, next) => {
-          this.addConnection((err, conn) => {
-            next(err, conn);
+      for (let i = 0; i < this.config.minpoolsize; i++) {
+        this.addConnection()
+          .then((conn: ConnObj) => {
+            this.pool.push(conn);
+          })
+          .catch((err) => {
+            return reject(err);
           });
-        },
-        (err, conns) => {
+      }
+      resolve(null);
+    });
+  }
+  initialize(): Promise<any> {
+    logger.level = this.config.logging.level;
+    return new Promise((resolve, reject) => {
+      // If a drivername is supplied, initialize the via the old method,
+      // Class.forName()
+      if (this.config.drivername && !isDS(this.config.drivername)) {
+        java.newInstance(this.config.drivername, async (err, driver) => {
           if (err) {
             return reject(err);
           }
-          conns.forEach((conn) => {
-            this.pool.push(conn);
-          });
-          return resolve(null);
-        },
-      );
+          await registerDriver(driver);
+        });
+      } else {
+        this._addConnectionsOnInitialize();
+      }
+
+      events.emit('initialized');
+      resolve(true);
     });
   }
-  initialize(callback) {
-    logger.level = this.logging.level;
-
-    // If a drivername is supplied, initialize the via the old method,
-    // Class.forName()
-    if (this.drivername && !isDS(this.drivername)) {
-      java.newInstance(this.drivername, (err, driver) => {
-        if (err) {
-          return callback(err);
-        }
-        registerDriver(driver, (err) => {
-          if (err) {
-            return callback(err);
-          }
-          this._addConnectionsOnInitialize();
-        });
-      });
-    } else {
-      this._addConnectionsOnInitialize();
-    }
-
-    events.emit('initialized');
-  }
-  reserve(): Promise<any> {
+  reserve(): Promise<ConnObj> {
     let conn = null;
     return new Promise((resolve, reject) => {
       this._closeIdleConnections();
@@ -247,7 +246,7 @@ export class Pool {
         }
 
         this.reserved.unshift(conn);
-      } else if (this.reserved.length < this.maxpoolsize) {
+      } else if (this.reserved.length < this.config.maxpoolsize) {
         try {
           conn = this.addConnectionSync();
           this.reserved.unshift(conn);
@@ -266,18 +265,18 @@ export class Pool {
     });
   }
   _closeIdleConnections() {
-    if (!this.maxidle) {
+    if (!this.config.maxidle) {
       return;
     }
 
-    closeIdleConnectionsInArray(this.pool, this.maxidle);
-    closeIdleConnectionsInArray(this.reserved, this.maxidle);
+    closeIdleConnectionsInArray(this.pool, this.config.maxidle);
+    closeIdleConnectionsInArray(this.reserved, this.config.maxidle);
   }
-  release(conn) {
+  release(conn: ConnObj) {
     return new Promise((resolve, reject) => {
       if (typeof conn === 'object') {
         const { uuid } = conn;
-        this.reserved = this.reserved.filter((c) => c.uuid !== uuid);
+        this.reserved = this.reserved.filter((c: ConnObj) => c.uuid !== uuid);
 
         if (conn.lastIdle) {
           conn.lastIdle = new Date().getTime();
@@ -293,31 +292,22 @@ export class Pool {
     const conns = this.pool.concat(this.reserved);
 
     return new Promise((resolve) => {
-      _each(
-        conns,
-        (conn, done) => {
-          if (typeof conn === 'object' && conn.conn !== null) {
-            conn.conn.close(() => {
-              // we don't want to prevent other connections from being closed
-              done();
-            });
-          } else {
-            done();
-          }
-        },
-        () => {
-          this.pool = [];
-          this.reserved = [];
+      for (const conn of conns) {
+        if (typeof conn === 'object' && conn.conn !== null) {
+          conn.conn.close();
+        }
+      }
 
-          resolve(void 0);
-        },
-      );
+      this.pool = [];
+      this.reserved = [];
+
+      resolve(void 0);
     });
   }
 }
 
 const connStatus = function (acc, pool) {
-  acc = pool.reduce((conns, connobj) => {
+  acc = pool.reduce((conns, connobj: ConnObj) => {
     const { conn } = connobj;
     const closed = conn.isClosedSync();
     const readonly = conn.isReadOnlySync();
@@ -333,7 +323,7 @@ const connStatus = function (acc, pool) {
   return acc;
 };
 
-function closeIdleConnectionsInArray(array, maxIdle) {
+function closeIdleConnectionsInArray(array: Array<ConnObj>, maxIdle: number) {
   const time = new Date().getTime();
   const maxLastIdle = time - maxIdle;
 
@@ -341,7 +331,7 @@ function closeIdleConnectionsInArray(array, maxIdle) {
     const conn = array[i];
     if (typeof conn === 'object' && conn.conn !== null) {
       if (conn.lastIdle < maxLastIdle) {
-        conn.conn.close(() => {});
+        conn.conn.close();
         array.splice(i, 1);
       }
     }

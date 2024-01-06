@@ -1,79 +1,158 @@
-import { ResultSet } from './ResultSet';
+import { IResultSet, ResultSet } from './ResultSet';
 import { ResultSetMetaData } from './ResultSetMetadata';
-import { Statement } from './Statement';
 import { logger } from './Helper';
+import { getInstance } from './jinst';
+
+export interface IPreparedStatement {
+  addBatch(): Promise<void>;
+  clearParameters(): Promise<void>;
+  execute(): Promise<ResultSet>;
+  executeBatch(): Promise<void>;
+  executeQuery(): Promise<IResultSet>;
+  executeUpdate(): Promise<number>;
+  getMetaData(): Promise<ResultSetMetaData>;
+  getParameterMetaData(): Promise<ResultSetMetaData>;
+  setArray(index, val, callback): void;
+  setAsciiStream(index, val, length, callback): void;
+  setBigDecimal(index: number, value: string): void;
+  setBinaryStream(index, val, length, callback): void;
+  setBlob(index, val, length, callback): void;
+  setBoolean(index: number, val: boolean): void;
+  setByte(index: any, val: any): void;
+  setBytes(index: any, val: any): void;
+  setCharacterStream(index, val, length, callback): void;
+  setClob(index, val, length, callback): void;
+  setDate(index: number, value: string): void;
+  setDouble(index: number, value: number): void;
+  setFloat(index: number, value: number): void;
+  setInt(index: number, value: number): void;
+  setLong(index: number, value: number): void;
+  setTimestamp(index: number, value: string): void;
+  setTime(index: number, value: string): void;
+  setString(index: number, value: string): void;
+}
+
+const java = getInstance();
 
 export class PreparedStatement {
-  private ps: any;
+  protected ps: IPreparedStatement;
 
-  constructor(ps: any) {
-    this.ps = new PreparedStatement(ps);
+  constructor(ps: IPreparedStatement) {
+    this.ps = ps;
   }
-  addBatch(callback) {
-    this.ps.addBatch('', (err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
-  }
-  clearParameters(callback) {
-    this.ps.clearParameters((err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
-  }
-  execute(callback) {
-    this.ps.execute('', (err, result) => {
-      if (err) {
-        logger.error(err);
-        return callback(err);
-      }
-      callback(null, result);
-    });
-  }
-  executeBatch(callback) {
-    this.ps.executeBatch((err, result) => {
-      if (err) {
-        logger.error(err);
-        return callback(err);
-      }
-      callback(null, result);
-    });
-  }
-  executeQuery() {
+
+  async addBatch(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.ps.executeQuery((err, resultset) => {
-        if (err) {
+      this.ps
+        .addBatch()
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
           logger.error(err);
-          return reject(err);
-        }
-        return resolve(new ResultSet(resultset));
-      });
+          reject(err);
+        });
     });
   }
-  executeUpdate() {
+
+  async clearParameters(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.ps.executeUpdate((err, result) => {
-        if (err) {
+      this.ps
+        .clearParameters()
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
           logger.error(err);
-          return reject(err);
-        }
-        return resolve(result);
-      });
+          reject(err);
+        });
     });
   }
-  getMetaData(callback) {
-    this.ps.getMetaData((err, result) => {
-      if (err) return callback(err);
-      callback(null, new ResultSetMetaData(result));
+
+  async execute(): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.ps
+        .execute()
+        .then((result: ResultSet | PromiseLike<ResultSet>) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          logger.error(err);
+          reject(err);
+        });
     });
   }
-  getParameterMetaData(callback) {
-    callback(new Error('NOT IMPLEMENTED'));
-    // this.ps.getParameterMetaData(function(err, result) {
-    //   if (err) callback(err);
-    //   callback(null, result);
-    // });
+
+  async executeBatch(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.ps
+        .executeBatch()
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
+          logger.error(err);
+          reject(err);
+        });
+    });
   }
+
+  async executeQuery(): Promise<IResultSet> {
+    return new Promise((resolve, reject) => {
+      this.ps
+        .executeQuery()
+        .then((result: IResultSet) => {
+          return resolve(result);
+        })
+        .catch((err) => {
+          logger.error(err);
+          reject(err);
+        });
+    });
+  }
+
+  async executeUpdate(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.ps
+        .executeUpdate()
+        .then((result: number) => {
+          return resolve(result);
+        })
+        .catch((err) => {
+          logger.error(err);
+          reject(err);
+        });
+    });
+  }
+
+  async getMetaData(): Promise<ResultSetMetaData> {
+    return new Promise((resolve, reject) => {
+      this.ps
+        .getMetaData()
+        .then((result: ResultSetMetaData) => {
+          return resolve(result);
+        })
+        .catch((err) => {
+          logger.error(err);
+          reject(err);
+        });
+    });
+  }
+
+  async getParameterMetaData(): Promise<ResultSetMetaData> {
+    return new Promise((resolve, reject) => {
+      this.ps
+        .getParameterMetaData()
+        .then((result: ResultSetMetaData) => {
+          return resolve(result);
+        })
+        .catch((err) => {
+          logger.error(err);
+          reject(err);
+        });
+    });
+  }
+
   setArray(index, val, callback) {
     callback(new Error('NOT IMPLEMENTED'));
   }
@@ -82,12 +161,13 @@ export class PreparedStatement {
     callback(new Error('NOT IMPLEMENTED'));
   }
   // val must be a java.math.BigDecimal
-  setBigDecimal(index, val, callback) {
-    this.ps.setBigDecimal(index, val, (err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
+  setBigDecimal(index: number, value: string): void {
+    const bigdecimalValue = value
+      ? java.newInstanceSync('java.math.BigDecimal', value)
+      : 0;
+    return this.ps.setBigDecimal(index, bigdecimalValue);
   }
+
   setBinaryStream(index, val, length, callback) {
     // length is optional, or can be int or long.
     callback(new Error('NOT IMPLEMENTED'));
@@ -98,24 +178,16 @@ export class PreparedStatement {
     // val can be java.sql.Blob or java.io.InputStream
     callback(new Error('NOT IMPLEMENTED'));
   }
-  setBoolean(index, val, callback) {
-    this.ps.setBoolean(index, val, (err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
+  setBoolean(index: number, val: boolean) {
+    return this.ps.setBoolean(index, val);
   }
-  setByte(index, val, callback) {
-    this.ps.setByte(index, val, (err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
+  setByte(index: any, val: any) {
+    return this.ps.setByte(index, val);
   }
-  setBytes(index, val, callback) {
-    this.ps.setBytes(index, val, (err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
+  setBytes(index: any, val: any) {
+    return this.ps.setBytes(index, val);
   }
+
   setCharacterStream(index, val, length, callback) {
     // length is optional, or can be int or long.
     // val must be a java.io.Reader
@@ -126,82 +198,38 @@ export class PreparedStatement {
     // val can be a java.io.Reader or a java.sql.Clob
     callback(new Error('NOT IMPLEMENTED'));
   }
-  setDate(index, val, calendar, callback) {
-    if (calendar === null) {
-      this.ps.setDate(index, val, (err) => {
-        if (err) return callback(err);
-        callback(null);
-      });
-    } else {
-      callback(new Error('NOT IMPLEMENTED'));
-      /*
-      this.ps.setDate(index, val, calendar, (err) => {
-        if (err) return callback(err);
-        callback(null);
-      });
-      */
-    }
+  setDate(index: number, value: string): void {
+    const date = value
+      ? java.callStaticMethodSync('java.sql.Date', 'valueOf', value)
+      : null;
+    return this.ps.setDate(index, date);
   }
-  setDouble(index, val, callback) {
-    this.ps.setDouble(index, val, (err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
+  setDouble(index: number, value: number): void {
+    return this.ps.setDouble(index, value);
   }
-  setFloat(index, val, callback) {
-    this.ps.setFloat(index, val, (err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
+  setFloat(index: number, value: number): void {
+    return this.ps.setFloat(index, value);
   }
-  setInt(index, val, callback) {
-    this.ps.setInt(index, val, (err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
+  setInt(index: number, value: number): void {
+    return this.ps.setInt(index, value);
   }
-  setLong(index, val, callback) {
-    this.ps.setLong(index, val, (err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
+  setLong(index: number, value: string): void {
+    const longValue = value ? java.newInstanceSync('java.lang.Long', value) : 0;
+    return this.ps.setLong(index, longValue);
   }
-  setString(index, val, callback) {
-    this.ps.setString(index, val, (err) => {
-      if (err) return callback(err);
-      callback(null);
-    });
+  setString(index: number, value: string): void {
+    return this.ps.setString(index, value);
   }
-  setTime(index, val, calendar, callback) {
-    if (calendar === null) {
-      this.ps.setTime(index, val, (err) => {
-        if (err) return callback(err);
-        callback(null);
-      });
-    } else {
-      callback(new Error('NOT IMPLEMENTED'));
-      /*
-      this.ps.setTime(index, val, calendar, (err) => {
-        if (err) return callback(err);
-        callback(null);
-      });
-      */
-    }
+  setTime(index: number, value: string): void {
+    const time = value
+      ? java.callStaticMethodSync('java.sql.Time', 'valueOf', value)
+      : null;
+    return this.ps.setTime(index, time);
   }
-  setTimestamp(index, val, calendar, callback) {
-    if (calendar === null) {
-      this.ps.setTimestamp(index, val, (err) => {
-        if (err) return callback(err);
-        callback(null);
-      });
-    } else {
-      callback(new Error('NOT IMPLEMENTED'));
-      /*
-      this.ps.setTimestamp(index, val, calendar, (err) => {
-        if (err) return callback(err);
-        callback(null);
-      });
-      */
-    }
+  setTimestamp(index: number, value: string): void {
+    const timestamp = value
+      ? java.callStaticMethodSync('java.sql.Timestamp', 'valueOf', value)
+      : null;
+    return this.ps.setTimestamp(index, timestamp);
   }
 }
