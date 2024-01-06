@@ -5,12 +5,7 @@ const java = getInstance();
 
 const DM = 'java.sql.DriverManager';
 
-export function getConnection(url, propsoruser, callback) {
-  // Get arguments as an array
-  const args = Array.prototype.slice.call(arguments);
-
-  // Pull the callback off the end of the arguments
-  callback = args.pop();
+export function getConnection(...args: any[]) {
   // Check arguments for validity, and return error if invalid
   const validArgs =
     args[0] &&
@@ -25,21 +20,13 @@ export function getConnection(url, propsoruser, callback) {
     return new Error('INVALID ARGUMENTS');
   }
 
-  // Push a callback handler onto the arguments
-  args.push((err, conn) => {
-    if (err) {
-      return callback(err);
-    }
-    return callback(null, conn);
-  });
-
   // Add DM and 'getConnection' string onto beginning of args
   // (unshift in reverse order of desired order)
   args.unshift('getConnection');
   args.unshift(DM);
 
   // Forward modified arguments to java.callStaticMethod
-  java.callStaticMethod.apply(java, args);
+  return java.callStaticMethod(...args);
 }
 
 export function getConnectionSync(...args: any[]) {
@@ -63,30 +50,17 @@ export function getConnectionSync(...args: any[]) {
   args.unshift(DM);
 
   // Forward modified arguments to java.callStaticMethod
-  return java.callStaticMethodSync.apply(java, args);
+  return java.callStaticMethodSync(...args);
 }
 
-export function getLoginTimeout(callback) {
-  java.callStaticMethod(DM, 'getLoginTimeout', (err, seconds) => {
-    if (err) {
-      return callback(err);
-    }
-    return callback(null, seconds);
-  });
+export function getLoginTimeout() {
+  return java.callStaticMethodSync(DM, 'getLoginTimeout');
 }
-export function registerDriver(driver, callback) {
-  java.callStaticMethod(DM, 'registerDriver', driver, (err) => {
-    if (err) {
-      return callback(err);
-    }
-    return callback(null);
-  });
+
+export function registerDriver(driver: string) {
+  return java.callStaticMethodSync(DM, 'registerDriver', driver);
 }
-export function setLoginTimeout(seconds, callback) {
-  java.callStaticMethod(DM, 'setLoginTimeout', seconds, (err) => {
-    if (err) {
-      return callback(err);
-    }
-    return callback(null, true);
-  });
+
+export function setLoginTimeout(seconds) {
+  return java.callStaticMethodSync(DM, 'setLoginTimeout', seconds);
 }

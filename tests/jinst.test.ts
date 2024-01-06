@@ -10,6 +10,8 @@ import {
 } from '../src/jinst';
 
 import { JDBC } from '../src/jdbc';
+import { ConnObj } from 'src/Pool';
+import { Statement } from 'src/Statement';
 
 const config = {
   url: 'jdbc:sqlite:sample.db',
@@ -17,6 +19,10 @@ const config = {
   password: '',
   drivername: 'org.sqlite.JDBC',
 };
+
+let connobj: ConnObj;
+let statement: Statement;
+let db: JDBC;
 
 // Tests
 describe('jinst', () => {
@@ -62,23 +68,74 @@ describe('jinst', () => {
         './drivers/slf4j-api-1.7.36.jar',
       ]);
     }
-    const db = new JDBC(config);
+    db = new JDBC(config);
     expect(db).toBeDefined();
-    const connobj = await db.reserve();
+    await db.initialize();
+    connobj = await db.reserve();
+  });
 
+  it('should be able to select some values', async () => {
     const { conn } = connobj;
     expect(conn).toBeDefined();
 
-    const statement = await conn.createStatement();
+    statement = await conn.createStatement();
     expect(statement).toBeDefined();
 
-    const result = await statement.executeQuery('select 1');
-    expect(result).toBeDefined();
+    const rs = await statement.executeQuery('select id from test where id = 1');
+    expect(rs).toBeDefined();
+    const result: any[] = rs.toObjArray();
+    expect(result[0].id).toBe(1);
+  });
 
+  it('should be able to update a value', async () => {
+    const { conn } = connobj;
+    expect(conn).toBeDefined();
+
+    statement = await conn.createStatement();
+    expect(statement).toBeDefined();
+
+    const rs = await statement.executeUpdate(
+      'update test set id = 2 where id = 2',
+    );
+    expect(rs).toBe(1);
+  });
+
+  it('should be able to insert a value', async () => {
+    const { conn } = connobj;
+    expect(conn).toBeDefined();
+
+    statement = await conn.createStatement();
+    expect(statement).toBeDefined();
+
+    const rs = await statement.executeUpdate('insert into test (id) values(3)');
+    expect(rs).toBe(1);
+  });
+
+  it('should be able to delete a value', async () => {
+    const { conn } = connobj;
+    expect(conn).toBeDefined();
+
+    statement = await conn.createStatement();
+    expect(statement).toBeDefined();
+
+    const rs = await statement.executeUpdate('delete from test where id = 3');
+    expect(rs).toBe(1);
+  });
+
+  it('should be able to get database metadata', async () => {
+    const { conn } = connobj;
+    expect(conn).toBeDefined();
+    const dmb = await conn.getMetaData();
+    expect(dmb).toBeDefined();
+  });
+
+  it('should be able to release the connection', async () => {
     // Release the connection)
 
     db.release(connobj);
-    expect(conn.isClosedSync()).toBe(false);
+    const { conn } = connobj;
+    await conn.close();
+    expect(conn.isClosedSync()).toBe(true);
 
     db.purge();
   });

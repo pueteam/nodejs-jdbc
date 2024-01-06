@@ -1,22 +1,24 @@
-import { ResultSet } from './ResultSet';
+import { IResultSet, ResultSet } from './ResultSet';
 import { Connection } from './Connection';
 import { getInstance, events } from './jinst';
 import {
   isArray,
   isBoolean,
-  isFunction,
   isInteger,
   isNull,
   isString,
   isUndefined,
 } from './Helper';
+import PromisifyAll from './PromisifyAll';
 
 const java = getInstance();
 
+export interface IDatabaseMetadata {}
+
 export class DatabaseMetaData {
   private dbm: any;
-  constructor(dbm: any) {
-    this.dbm = dbm;
+  constructor(databaseMetaData: IDatabaseMetadata) {
+    this.dbm = PromisifyAll(databaseMetaData) as IDatabaseMetadata;
   }
 
   /**
@@ -24,33 +26,31 @@ export class DatabaseMetaData {
    *
    * @param {String} catalog - A  catalog name; must match the catalog name as it is stored in the database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: a ResultSet object in which each row is a schema description
+   * @returns {ResultSet} ResultSet object in which each row is a schema description
    */
-  getSchemas(catalog: string, schemaPattern: string, callback: any): ResultSet {
-    if (isFunction(catalog)) {
-      callback = catalog;
-      catalog = null;
-    } else if (isFunction(schemaPattern)) {
-      callback = schemaPattern;
-      schemaPattern = null;
-    }
-
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getSchemas(catalog, schemaPattern, (err, result) => {
-      if (err) {
-        return callback(err);
+  async getSchemas(
+    catalog?: string,
+    schemaPattern?: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      if (catalog) {
+        this.dbm
+          .getSchemasAsync(catalog, schemaPattern)
+          .then((result: IResultSet) => {
+            return resolve(new ResultSet(result));
+          })
+          .catch((error) => {
+            return reject(error);
+          });
       }
-      return callback(null, new ResultSet(result));
+      this.dbm
+        .getSchemasAsync()
+        .then((result: IResultSet) => {
+          return resolve(new ResultSet(result));
+        })
+        .catch((error) => {
+          return reject(error);
+        });
     });
   }
 
@@ -61,126 +61,75 @@ export class DatabaseMetaData {
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} tableNamePattern - A table name pattern; must match the table name as it is stored in the database
    * @param {String[]} types -  A list of table types, which must be from the list of table types returned from getTableTypes(),to include; null returns all types
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a table description
+   * @returns {ResultSet} each row is a table description
    */
-  getTables(catalog, schemaPattern, tableNamePattern, types, callback) {
-    let validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(tableNamePattern) ||
-        isUndefined(tableNamePattern) ||
-        isString(tableNamePattern)) &&
-      (isNull(types) || isUndefined(types) || isArray(types));
 
-    if (isArray(types)) {
-      types.forEach((type) => {
-        if (!isString(type)) {
-          validParams = false;
-          return false;
-        }
-        return true;
-      });
-    }
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getTables(
-      catalog,
-      schemaPattern,
-      tableNamePattern,
-      types,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getTables(
+    catalog?: string,
+    schemaPattern?: string,
+    tableNamePattern?: string,
+    types?: string[],
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getTablesAsync(catalog, schemaPattern, tableNamePattern, types)
+        .then((result: IResultSet) => {
+          return resolve(new ResultSet(result));
+        })
+        .catch((error) => {
+          return reject(error);
+        });
+    });
   }
 
   /**
    * Retrieves whether the current user can call all the procedures returned by
    * the method getProcedures.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  allProceduresAreCallable(callback) {
-    this.dbm.allProceduresAreCallable((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  allProceduresAreCallable(): boolean {
+    return this.dbm.allProceduresAreCallableSync();
   }
 
   /**
    * Retrieves whether the current user can use all the tables returned by the
    * method getTables in a SELECT statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  allTablesAreSelectable(callback) {
-    this.dbm.allTablesAreSelectable((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  allTablesAreSelectable(): boolean {
+    return this.dbm.allTablesAreSelectableSync();
   }
 
   /**
-   * Retrieves whether a SQLException while autoCommit is true inidcates that all
+   * Retrieves whether a SQLException while autoCommit is true indicates that all
    * open ResultSets are closed, even ones that are holdable.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  autoCommitFailureClosesAllResultSets(callback) {
-    this.dbm.autoCommitFailureClosesAllResultSets((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  autoCommitFailureClosesAllResultSets(): boolean {
+    return this.dbm.autoCommitFailureClosesAllResultSetsSync();
   }
 
   /**
    * Retrieves whether a data definition statement within a transaction forces
    * the transaction to commit.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  dataDefinitionCausesTransactionCommit(callback) {
-    this.dbm.dataDefinitionCausesTransactionCommit((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  dataDefinitionCausesTransactionCommit(): boolean {
+    return this.dbm.dataDefinitionCausesTransactionCommitSync();
   }
 
   /**
    * Retrieves whether this database ignores a data definition statement within a
    * transaction.
    *
-   * @param {Function} callback
    * @returns {Boolean} Via callback: true if so; false otherwise
    */
-  dataDefinitionIgnoredInTransactions(callback) {
-    this.dbm.dataDefinitionIgnoredInTransactions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  dataDefinitionIgnoredInTransactions(): boolean {
+    return this.dbm.dataDefinitionIgnoredInTransactionsSync();
   }
 
   /**
@@ -188,37 +137,20 @@ export class DatabaseMetaData {
    * method ResultSet.rowDeleted.
    *
    * @param {Number} type - the ResultSet type; one of ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE, or ResultSet.TYPE_SCROLL_SENSITIVE
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if deletes are detected by the given result set type; false otherwise
+   * @returns {Boolean} true if deletes are detected by the given result set type; false otherwise
    */
-  deletesAreDetected(type, callback) {
-    const validParams = isInteger(type);
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.deletesAreDetected(type, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  deletesAreDetected(type: number): boolean {
+    return this.dbm.deletesAreDetectedSync(type);
   }
 
   /**
    * Retrieves whether the return value for the method getMaxRowSize includes the
    * SQL data types LONGVARCHAR and LONGVARBINARY.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean}true if so; false otherwise
    */
-  doesMaxRowSizeIncludeBlobs(callback) {
-    this.dbm.doesMaxRowSizeIncludeBlobs((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  doesMaxRowSizeIncludeBlobs(): boolean {
+    return this.dbm.doesMaxRowSizeIncludeBlobsSync();
   }
 
   /**
@@ -226,16 +158,10 @@ export class DatabaseMetaData {
    * name(s) or index(es) specified for the auto generated key column(s) are
    * valid and the statement succeeds.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  generatedKeyAlwaysReturned(callback) {
-    this.dbm.generatedKeyAlwaysReturned((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  generatedKeyAlwaysReturned(): boolean {
+    return this.dbm.generatedKeyAlwaysReturnedSync();
   }
 
   /**
@@ -246,44 +172,29 @@ export class DatabaseMetaData {
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} typeNamePattern - A type name pattern; must match the type name as it is stored in the database
    * @param {String} attributeNamePattern - An attribute name pattern; must match the attribute name as it is declared in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: a ResultSet object in which each row is an attribute description
+   * @returns {Promise<ResultSet>} a ResultSet object in which each row is an attribute description
    */
-  getAttributes(
-    catalog,
-    schemaPattern,
-    typeNamePattern,
-    attributeNamePattern,
-    callback,
-  ) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(typeNamePattern) ||
-        isUndefined(typeNamePattern) ||
-        isString(typeNamePattern)) &&
-      (isNull(attributeNamePattern) ||
-        isUndefined(attributeNamePattern) ||
-        isString(attributeNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getAttributes(
-      catalog,
-      schemaPattern,
-      typeNamePattern,
-      attributeNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getAttributes(
+    catalog: string,
+    schemaPattern: string,
+    typeNamePattern: string,
+    attributeNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getAttributesAsync(
+          catalog,
+          schemaPattern,
+          typeNamePattern,
+          attributeNamePattern,
+        )
+        .then((result: IResultSet) => {
+          return resolve(new ResultSet(result));
+        })
+        .catch((error) => {
+          return reject(error);
+        });
+    });
   }
 
   /**
@@ -295,48 +206,42 @@ export class DatabaseMetaData {
    * @param {String} table - A table name; must match the table name as it is stored in the database
    * @param {Number} scope - The scope of interest; use same values as SCOPE
    * @param {Boolean} nullable - Include columns that are nullable
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a column description
+   * @returns {Promise<ResultSet>} each row is a column description
    */
-  getBestRowIdentifier(catalog, schema, table, scope, nullable, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schema) || isUndefined(schema) || isString(schema)) &&
-      isString(table) &&
-      isInteger(scope) &&
-      isBoolean(nullable);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getBestRowIdentifier(
-      catalog,
-      schema,
-      table,
-      scope,
-      nullable,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getBestRowIdentifier(
+    catalog: string,
+    schema: string,
+    table: string,
+    scope: number,
+    nullable: boolean,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getBestRowIdentifierAsync(catalog, schema, table, scope, nullable)
+        .then((result: IResultSet) => {
+          return resolve(new ResultSet(result));
+        })
+        .catch((error) => {
+          return reject(error);
+        });
+    });
   }
 
   /**
    * Retrieves the catalog names available in this database.
    *
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: a ResultSet object in which each row has a single String column that is a catalog name
+   * @returns {Promise<ResultSet>} a ResultSet object in which each row has a single String column that is a catalog name
    */
-  getCatalogs(callback) {
-    this.dbm.getCatalogs((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, new ResultSet(result));
+  async getCatalogs(): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getCatalogsAsync()
+        .then((result: IResultSet) => {
+          return resolve(new ResultSet(result));
+        })
+        .catch((error) => {
+          return reject(error);
+        });
     });
   }
 
@@ -344,45 +249,32 @@ export class DatabaseMetaData {
    * Retrieves the String that this database uses as the separator between a
    * catalog and table name.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: the separator string
+   * @returns {String} the separator string
    */
-  getCatalogSeparator(callback) {
-    this.dbm.getCatalogSeparator((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getCatalogSeparator(): string {
+    return this.dbm.getCatalogSeparatorSync();
   }
 
   /**
    * Retrieves the database vendor's preferred term for "catalog".
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: the vendor term for "catalog"
+   * @returns {String} the vendor term for "catalog"
    */
-  getCatalogTerm(callback) {
-    this.dbm.getCatalogTerm((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getCatalogTerm() {
+    return this.dbm.getCatalogTermSync();
   }
 
   /**
    * Retrieves a list of the client info properties that the driver supports.
    *
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: A ResultSet object; each row is a supported client info property
+   * @returns {Promise<ResultSet>} A ResultSet object; each row is a supported client info property
    */
-  getClientInfoProperties(callback) {
-    this.dbm.getClientInfoProperties((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, new ResultSet(result));
+  async getClientInfoProperties(): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getClientInfoPropertiesAsync()
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((error) => reject(error));
     });
   }
 
@@ -393,34 +285,20 @@ export class DatabaseMetaData {
    * @param {String} schema - A schema name; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} table - A table name; must match the table name as it is stored in the database
    * @param {String} columnNamePattern - A column name pattern; must match the column name as it is stored in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a column privilege description
+   * @returns {Promise<ResultSet>} Via callback: each row is a column privilege description
    */
-  getColumnPrivileges(catalog, schema, table, columnNamePattern, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schema) || isUndefined(schema) || isString(schema)) &&
-      isString(table) &&
-      (isNull(columnNamePattern) ||
-        isUndefined(columnNamePattern) ||
-        isString(columnNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getColumnPrivileges(
-      catalog,
-      schema,
-      table,
-      columnNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getColumnPrivileges(
+    catalog: string,
+    schema: string,
+    table: string,
+    columnNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getColumnPrivilegesAsync(catalog, schema, table, columnNamePattern)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((error) => reject(error));
+    });
   }
 
   /**

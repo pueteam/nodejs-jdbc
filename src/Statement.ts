@@ -1,11 +1,32 @@
-import { ResultSet } from './ResultSet';
+import PromisifyAll from './PromisifyAll';
+import { IResultSet, ResultSet } from './ResultSet';
 import { getInstance, events } from './jinst';
-import { isString, isUndefined } from './Helper';
 
 const java = getInstance();
 
+export interface IStatement {
+  executeBatchSync(): number[];
+  clearBatchSync(): void;
+  addBatchSync(sql: string): void;
+  executeBatchAsync(): Promise<number[]>;
+  executeUpdateAsync(sql: string): Promise<number>;
+  executeQueryAsync(sql: string): Promise<IResultSet>;
+  execute(sql: string): Promise<number | IResultSet>;
+  addBatchAsync(sql: string): Promise<void>;
+  clearBatchAsync(): Promise<void>;
+  cancelAsync(): Promise<void>;
+  closeAsync(): Promise<void>;
+  getFetchSizeSync(): number;
+  setFetchSizeSync(rows: number): void;
+  getMaxRowsSync(): number;
+  setMaxRowsSync(max: number): void;
+  getQueryTimeoutSync(): number;
+  setQueryTimeoutSync(seconds: number): void;
+  getGeneratedKeysAsync(): Promise<IResultSet>;
+}
+
 export class Statement {
-  private s: any;
+  protected s: IStatement;
   static CLOSE_CURRENT_RESULT: any;
   static KEEP_CURRENT_RESULT: any;
   static CLOSE_ALL_RESULTS: any;
@@ -14,167 +35,124 @@ export class Statement {
   static RETURN_GENERATED_KEYS: any;
   static NO_GENERATED_KEYS: any;
 
-  constructor(s) {
-    this.s = s;
+  constructor(statement: IStatement) {
+    this.s = PromisifyAll(statement) as IStatement;
   }
 
-  addBatch(sql, callback) {
-    return callback(new Error('NOT IMPLEMENTED'));
+  addBatch(sql: string): Promise<void> {
+    return this.s.addBatchAsync(sql);
   }
 
-  cancel(callback) {
-    this.s.cancel((err) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null);
-    });
+  addBatchSync(sql: string): void {
+    return this.s.addBatchSync(sql);
   }
 
-  clearBatch(callback) {
-    this.s.clearBatch((err) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null);
-    });
+  clearBatchSync(): void {
+    return this.s.clearBatchSync();
   }
 
-  close(callback) {
-    this.s.close((err) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null);
-    });
+  clearBatch(): Promise<void> {
+    return this.s.clearBatchAsync();
   }
 
-  executeUpdate(...args: ((err: any, count: any) => void)[]) {
+  executeBatch(): Promise<number[]> {
+    return this.s.executeBatchAsync();
+  }
+
+  executeBatchSync(): number[] {
+    return this.s.executeBatchSync();
+  }
+
+  async cancel(): Promise<void> {
     return new Promise((resolve, reject) => {
-      // Check arguments for validity, and return error if invalid
-      if (!(isString(args[0]) && isUndefined(args[1]))) {
-        return reject(new Error('INVALID ARGUMENTS'));
-      }
-
-      // Push a callback handler onto the arguments
-      args.push((err, count) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(count);
-      });
-
-      // Forward modified arguments to _s.executeUpdate
-      this.s.executeUpdate.apply(this.s, args);
+      this.s
+        .cancelAsync()
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
 
-  executeQuery(sql: string) {
+  async close(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.s.executeQuery(sql, (err, resultset) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(new ResultSet(resultset));
-      });
+      this.s
+        .closeAsync()
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
 
-  execute(sql, callback) {
-    const s = this.s;
-    if (typeof sql === 'string') {
-      s.execute(sql, (err, isResultSet) => {
-        if (err) {
-          return callback(err);
-        }
-        if (isResultSet) {
-          s.getResultSet((err, resultset) => {
-            if (err) {
-              return callback(err);
-            }
-            return callback(null, new ResultSet(resultset));
-          });
-        } else {
-          s.getUpdateCount((err, count) => {
-            if (err) {
-              return callback(err);
-            }
-            return callback(null, count);
-          });
-        }
-      });
-    } else {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
+  async executeUpdate(sql: string): Promise<number> {
+    return this.s.executeUpdateAsync(sql);
   }
 
-  getFetchSize(callback) {
-    this.s.getFetchSize((err, fetchSize) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, fetchSize);
+  async executeQuery(sql: string): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.s
+        .executeQueryAsync(sql)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((err) => reject(err));
     });
   }
 
-  setFetchSize(rows, callback) {
-    this.s.setFetchSize(rows, (err) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null);
+  async execute(sql: string): Promise<number | ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.s
+        .execute(sql)
+        .then((result: IResultSet) => {
+          resolve(new ResultSet(result));
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
   }
 
-  getMaxRows(callback) {
-    this.s.getMaxRows((err, max) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, max);
+  getFetchSize(): number {
+    return this.s.getFetchSizeSync();
+  }
+
+  setFetchSize(rows): void {
+    return this.s.setFetchSizeSync(rows);
+  }
+
+  getMaxRows(): number {
+    return this.s.getMaxRowsSync();
+  }
+
+  setMaxRows(max: number): void {
+    return this.s.setMaxRowsSync(max);
+  }
+
+  getQueryTimeout(): number {
+    return this.s.getQueryTimeoutSync();
+  }
+
+  setQueryTimeout(seconds: number): void {
+    return this.s.setQueryTimeoutSync(seconds);
+  }
+
+  async getGeneratedKeys(): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.s
+        .getGeneratedKeysAsync()
+        .then((resultset: IResultSet) => {
+          resolve(new ResultSet(resultset));
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
   }
 
-  setMaxRows(max, callback) {
-    this.s.setMaxRows(max, (err) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null);
-    });
-  }
-
-  getQueryTimeout(callback) {
-    this.s.getQueryTimeout((err, queryTimeout) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, queryTimeout);
-    });
-  }
-
-  setQueryTimeout(seconds, callback) {
-    this.s.setQueryTimeout(seconds, (err) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null);
-    });
-  }
-
-  getGeneratedKeys(callback) {
-    this.s.getGeneratedKeys((err, resultset) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, new ResultSet(resultset));
-    });
-  }
   clearParameters(arg0: (err: any) => any) {
-    throw new Error('Method not implemented.');
-  }
-
-  executeBatch(arg0: (err: any, result: any) => any) {
     throw new Error('Method not implemented.');
   }
 

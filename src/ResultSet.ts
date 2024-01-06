@@ -1,12 +1,10 @@
-import { getInstance, isJvmCreated, addOption } from './jinst';
+import { isJvmCreated, addOption } from './jinst';
 import {
   IColumnMetaData,
   IResultSetMetaData,
   ResultSetMetaData,
 } from './ResultSetMetadata';
 import { isNull } from './Helper';
-
-const java = getInstance();
 
 if (!isJvmCreated()) {
   addOption('-Xrs');
@@ -35,7 +33,7 @@ export type IFetchResult = object;
 export class ResultSet {
   private resultSet: IResultSet;
   constructor(resultSet: IResultSet) {
-    this.resultSet = resultSet as IResultSet;
+    this.resultSet = resultSet;
   }
   next() {
     return this.resultSet.nextSync();
@@ -44,8 +42,7 @@ export class ResultSet {
     const metas: IColumnMetaData[] = this.getMetaData().getAllColumnMeta();
     const result: IFetchResult = {};
 
-    for (let i = 0; i < metas.length; i++) {
-      const meta: IColumnMetaData = metas[i];
+    for (const meta of metas) {
       const getterName = 'get' + meta.type.name + 'Sync';
       if (typeof this.resultSet[getterName] !== 'function') {
         throw new Error(
@@ -56,10 +53,11 @@ export class ResultSet {
       switch (true) {
         case meta.type.name === 'Date' ||
           meta.type.name === 'Time' ||
-          meta.type.name === 'Timestamp':
+          meta.type.name === 'Timestamp': {
           const dateValue = this.resultSet[`${getterName}`](meta.label);
           result[meta.label] = dateValue ? dateValue.toString() : null;
           break;
+        }
         case meta.type.name === 'Int' &&
           isNull(this.resultSet.getObjectSync(meta.label)):
           result[meta.label] = null;
