@@ -4,6 +4,8 @@
 
 JDBC API Wrapper for node.js
 
+[![npm version](https://badge.fury.io/js/nodejs-jdbc.svg)](https://badge.fury.io/js/nodejs-jdbc)
+
 ## Motivation
 
 This module is based on [node-jdbc](https://github.com/CraZySacX/node-jdbc/tree/master) as a full rewrite to be
