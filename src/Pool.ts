@@ -213,25 +213,15 @@ export class Pool {
       resolve(null);
     });
   }
-  initialize(): Promise<any> {
+  async initialize(): Promise<any> {
     logger.level = this.config.logging.level;
-    return new Promise((resolve, reject) => {
-      // If a drivername is supplied, initialize the via the old method,
-      // Class.forName()
-      if (this.config.drivername && !isDS(this.config.drivername)) {
-        java.newInstance(this.config.drivername, async (err, driver) => {
-          if (err) {
-            return reject(err);
-          }
-          await registerDriver(driver);
-        });
-      } else {
-        this._addConnectionsOnInitialize();
-      }
-
-      events.emit('initialized');
-      resolve(true);
-    });
+    if (this.config.drivername && !isDS(this.config.drivername)) {
+      const driver = await java.newInstancePromise(this.config.drivername);
+      await registerDriver(driver);
+    } else {
+      await this._addConnectionsOnInitialize();
+    }
+    events.emit('initialized');
   }
   reserve(): Promise<ConnObj> {
     let conn = null;

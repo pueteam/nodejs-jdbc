@@ -14,7 +14,7 @@ import { ConnObj } from 'src/Pool';
 import { Statement } from 'src/Statement';
 
 const config = {
-  url: 'jdbc:sqlite:sample.db',
+  url: 'jdbc:sqlite:tests/sample.db',
   user: 'SA',
   password: '',
   drivername: 'org.sqlite.JDBC',
@@ -122,11 +122,28 @@ describe('jinst', () => {
     expect(rs).toBe(1);
   });
 
-  it('should be able to get database metadata', async () => {
+  it('should be able to get some database metadata', async () => {
     const { conn } = connobj;
     expect(conn).toBeDefined();
     const dmb = await conn.getMetaData();
     expect(dmb).toBeDefined();
+    const schemas = await dmb.getSchemas();
+    expect(schemas).toBeDefined();
+    expect(schemas.toObjArray().length).toBe(0);
+    const tables = await dmb.getTables(null, null, 'test');
+    expect(tables).toBeDefined();
+    expect(tables.toObjArray().length).toBe(1);
+    const columns = await dmb.getColumns(null, null, 'test', null);
+    expect(columns).toBeDefined();
+    const c: any[] = columns.toObjArray();
+    expect(c[0].COLUMN_NAME).toBe('id');
+    expect(c[0].DATA_TYPE).toBe(4);
+    expect(c[0].TYPE_NAME).toBe('INTEGER');
+    expect(c[0].COLUMN_SIZE).toBe(2000000000);
+    expect(c[0].DECIMAL_DIGITS).toBe(0);
+    expect(c[0].IS_NULLABLE).toBe('YES');
+    expect(c[0].IS_AUTOINCREMENT).toBe('NO');
+    expect(c[0].IS_GENERATEDCOLUMN).toBe('NO');
   });
 
   it('should be able to release the connection', async () => {

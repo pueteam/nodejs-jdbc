@@ -12,12 +12,12 @@ export class DataSource {
   ) {
     const DataSource = java.import(drivername);
     this.ds = new DataSource();
-    this.ds.setURL(url);
+    this.ds.setURLSync(url);
     if (user && typeof this.ds.setUser === 'function') {
-      this.ds.setUser(user);
+      this.ds.setUserSync(user);
     }
     if (password && typeof this.ds.setPassword === 'function') {
-      this.ds.setPassword(password);
+      this.ds.setPasswordSync(password);
     }
   }
   getConnectionDS() {

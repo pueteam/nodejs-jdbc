@@ -35,7 +35,6 @@ lerna-debug.log*
 !.vscode/extensions.json.local-pack
 
 bun.lockb
-sample.db
 .nvmrc
 tests/impaladm.test.ts
 tests/impalads.test.ts

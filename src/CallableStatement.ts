@@ -1,5 +1,4 @@
 import { IPreparedStatement, PreparedStatement } from './PreparedStatement';
-import PromisifyAll from './PromisifyAll';
 import { getInstance } from './jinst';
 
 export interface ICallableStatement extends IPreparedStatement {
@@ -27,7 +26,7 @@ export class CallableStatement extends PreparedStatement {
 
   constructor(statement: ICallableStatement) {
     super(statement);
-    this.cs = PromisifyAll(statement) as ICallableStatement;
+    this.cs = statement;
   }
 
   getArray(arg: number | string): any {

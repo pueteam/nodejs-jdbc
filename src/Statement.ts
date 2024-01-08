@@ -1,28 +1,42 @@
-import PromisifyAll from './PromisifyAll';
 import { IResultSet, ResultSet } from './ResultSet';
+import { IResultSetMetaData, ResultSetMetaData } from './ResultSetMetadata';
 import { getInstance, events } from './jinst';
 
 const java = getInstance();
 
 export interface IStatement {
+  setTimeSync(index: number, time: any): void;
+  setTimestampSync(index: number, timestamp: any): void;
+  setStringSync(index: number, value: string): void;
+  setLongSync(index: number, longValue: any): void;
+  setIntSync(index: number, value: number): void;
+  setDoubleSync(index: number, value: number): void;
+  setFloatSync(index: number, value: number): void;
+  setDateSync(index: number, date: any): void;
+  setByteSync(index: any, val: any): void;
+  setBytesSync(index: any, val: any): void;
+  setBooleanSync(index: number, val: boolean): void;
+  getMetaDataPromise(): Promise<IResultSetMetaData>;
+  setBigDecimalSync(index: number, bigdecimalValue: any): void;
+  clearParametersSync(): void;
   executeBatchSync(): number[];
   clearBatchSync(): void;
   addBatchSync(sql: string): void;
-  executeBatchAsync(): Promise<number[]>;
-  executeUpdateAsync(sql: string): Promise<number>;
-  executeQueryAsync(sql: string): Promise<IResultSet>;
+  executeBatchPromise(): Promise<number[]>;
+  executeUpdatePromise(sql: string): Promise<number>;
+  executeQueryPromise(sql: string): Promise<IResultSet>;
   execute(sql: string): Promise<number | IResultSet>;
-  addBatchAsync(sql: string): Promise<void>;
-  clearBatchAsync(): Promise<void>;
-  cancelAsync(): Promise<void>;
-  closeAsync(): Promise<void>;
+  addBatchPromise(sql: string): Promise<void>;
+  clearBatchPromise(): Promise<void>;
+  cancelPromise(): Promise<void>;
+  closePromise(): Promise<void>;
   getFetchSizeSync(): number;
   setFetchSizeSync(rows: number): void;
   getMaxRowsSync(): number;
   setMaxRowsSync(max: number): void;
   getQueryTimeoutSync(): number;
   setQueryTimeoutSync(seconds: number): void;
-  getGeneratedKeysAsync(): Promise<IResultSet>;
+  getGeneratedKeysPromise(): Promise<IResultSet>;
 }
 
 export class Statement {
@@ -36,11 +50,11 @@ export class Statement {
   static NO_GENERATED_KEYS: any;
 
   constructor(statement: IStatement) {
-    this.s = PromisifyAll(statement) as IStatement;
+    this.s = statement;
   }
 
   addBatch(sql: string): Promise<void> {
-    return this.s.addBatchAsync(sql);
+    return this.s.addBatchPromise(sql);
   }
 
   addBatchSync(sql: string): void {
@@ -52,11 +66,11 @@ export class Statement {
   }
 
   clearBatch(): Promise<void> {
-    return this.s.clearBatchAsync();
+    return this.s.clearBatchPromise();
   }
 
   executeBatch(): Promise<number[]> {
-    return this.s.executeBatchAsync();
+    return this.s.executeBatchPromise();
   }
 
   executeBatchSync(): number[] {
@@ -66,7 +80,7 @@ export class Statement {
   async cancel(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.s
-        .cancelAsync()
+        .cancelPromise()
         .then(() => {
           resolve();
         })
@@ -77,26 +91,17 @@ export class Statement {
   }
 
   async close(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.s
-        .closeAsync()
-        .then(() => {
-          resolve();
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    return this.s.closePromise();
   }
 
   async executeUpdate(sql: string): Promise<number> {
-    return this.s.executeUpdateAsync(sql);
+    return this.s.executeUpdatePromise(sql);
   }
 
   async executeQuery(sql: string): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       this.s
-        .executeQueryAsync(sql)
+        .executeQueryPromise(sql)
         .then((result: IResultSet) => resolve(new ResultSet(result)))
         .catch((err) => reject(err));
     });
@@ -142,7 +147,7 @@ export class Statement {
   async getGeneratedKeys(): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       this.s
-        .getGeneratedKeysAsync()
+        .getGeneratedKeysPromise()
         .then((resultset: IResultSet) => {
           resolve(new ResultSet(resultset));
         })
@@ -152,48 +157,70 @@ export class Statement {
     });
   }
 
-  clearParameters(arg0: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  clearParameters(): void {
+    return this.s.clearParametersSync();
   }
 
-  setTimestamp(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setTime(index: number, value: string): void {
+    const time = value
+      ? java.callStaticMethodSync('java.sql.Time', 'valueOf', value)
+      : null;
+    return this.s.setTimeSync(index, time);
   }
-  setTime(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setTimestamp(index: number, value: string): void {
+    const timestamp = value
+      ? java.callStaticMethodSync('java.sql.Timestamp', 'valueOf', value)
+      : null;
+    return this.s.setTimestampSync(index, timestamp);
   }
-  setString(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setString(index: number, value: string): void {
+    return this.s.setStringSync(index, value);
   }
-  setLong(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setLong(index: number, value: string): void {
+    const longValue = value ? java.newInstanceSync('java.lang.Long', value) : 0;
+    return this.s.setLongSync(index, longValue);
   }
-  setInt(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setInt(index: number, value: number): void {
+    return this.s.setIntSync(index, value);
   }
-  setFloat(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setDouble(index: number, value: number): void {
+    return this.s.setDoubleSync(index, value);
   }
-  setDouble(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setFloat(index: number, value: number): void {
+    return this.s.setFloatSync(index, value);
   }
-  setDate(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setDate(index: number, value: string): void {
+    const date = value
+      ? java.callStaticMethodSync('java.sql.Date', 'valueOf', value)
+      : null;
+    return this.s.setDateSync(index, date);
   }
-  setBytes(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setByte(index: any, val: any): void {
+    return this.s.setByteSync(index, val);
   }
-  setByte(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setBytes(index: any, val: any): void {
+    return this.s.setBytesSync(index, val);
   }
-  setBoolean(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setBoolean(index: number, val: boolean): void {
+    return this.s.setBooleanSync(index, val);
   }
-  getMetaData(arg0: (err: any, result: any) => any) {
-    throw new Error('Method not implemented.');
+  async getMetaData(): Promise<ResultSetMetaData> {
+    return new Promise((resolve, reject) => {
+      this.s
+        .getMetaDataPromise()
+        .then((result: IResultSetMetaData) => {
+          return resolve(new ResultSetMetaData(result));
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
   }
-  setBigDecimal(index: any, val: any, arg2: (err: any) => any) {
-    throw new Error('Method not implemented.');
+  setBigDecimal(index: number, value: string): void {
+    const bigdecimalValue = value
+      ? java.newInstanceSync('java.math.BigDecimal', value)
+      : 0;
+    return this.s.setBigDecimalSync(index, bigdecimalValue);
   }
 }
 

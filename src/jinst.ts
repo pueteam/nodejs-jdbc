@@ -8,6 +8,13 @@ export function isJvmCreated() {
 
 export function addOption(option) {
   if (!isJvmCreated() && option) {
+    java.asyncOptions = {
+      asyncSuffix: undefined, // Don't generate node-style methods taking callbacks
+      syncSuffix: 'Sync', // Sync methods use the base name(!!)
+      promiseSuffix: 'Promise', // Generate methods returning promises, using the suffix Promise.
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      promisify: require('util').promisify, // Needs Node.js version 8 or greater, see comment below
+    };
     java.options.push(option);
   } else if (isJvmCreated()) {
     logger.error("You've tried to add an option to an already running JVM!");

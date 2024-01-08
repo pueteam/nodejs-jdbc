@@ -14,6 +14,9 @@ to follow a more modern way of doing things.
 
 ## Latests Versions
 
+- 0.1.0
+Finished DataBaseMetadata wrapping migration
+
 - 0.0.8
 Added more tests and improved code readability
 

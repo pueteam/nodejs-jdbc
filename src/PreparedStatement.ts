@@ -1,35 +1,29 @@
 import { IResultSet, ResultSet } from './ResultSet';
-import { ResultSetMetaData } from './ResultSetMetadata';
+import { IResultSetMetaData, ResultSetMetaData } from './ResultSetMetadata';
 import { logger } from './Helper';
 import { getInstance } from './jinst';
 
 export interface IPreparedStatement {
-  addBatch(): Promise<void>;
-  clearParameters(): Promise<void>;
-  execute(): Promise<ResultSet>;
-  executeBatch(): Promise<void>;
-  executeQuery(): Promise<IResultSet>;
-  executeUpdate(): Promise<number>;
-  getMetaData(): Promise<ResultSetMetaData>;
-  getParameterMetaData(): Promise<ResultSetMetaData>;
-  setArray(index, val, callback): void;
-  setAsciiStream(index, val, length, callback): void;
-  setBigDecimal(index: number, value: string): void;
-  setBinaryStream(index, val, length, callback): void;
-  setBlob(index, val, length, callback): void;
-  setBoolean(index: number, val: boolean): void;
-  setByte(index: any, val: any): void;
-  setBytes(index: any, val: any): void;
-  setCharacterStream(index, val, length, callback): void;
-  setClob(index, val, length, callback): void;
-  setDate(index: number, value: string): void;
-  setDouble(index: number, value: number): void;
-  setFloat(index: number, value: number): void;
-  setInt(index: number, value: number): void;
-  setLong(index: number, value: number): void;
-  setTimestamp(index: number, value: string): void;
-  setTime(index: number, value: string): void;
-  setString(index: number, value: string): void;
+  addBatchPromise(): Promise<void>;
+  clearParametersPromise(): Promise<void>;
+  executePromise(): Promise<IResultSet>;
+  executeBatchPromise(): Promise<void>;
+  executeQueryPromise(): Promise<IResultSet>;
+  executeUpdatePromise(): Promise<number>;
+  getMetaDataPromise(): Promise<IResultSetMetaData>;
+  getParameterMetaDataPromise(): Promise<IResultSetMetaData>;
+  setBigDecimalSync(index: number, bigdecimalValue: any): void;
+  setBooleanSync(index: number, val: boolean): unknown;
+  setByteSync(index: any, val: any): unknown;
+  setBytesSync(index: any, val: any): unknown;
+  setDateSync(index: number, date: any): void;
+  setDoubleSync(index: number, value: number): void;
+  setFloatSync(index: number, value: number): void;
+  setIntSync(index: number, value: number): void;
+  setLongSync(index: number, longValue: any): void;
+  setStringSync(index: number, value: string): void;
+  setTimeSync(index: number, time: any): void;
+  setTimestampSync(index: number, timestamp: any): void;
 }
 
 const java = getInstance();
@@ -44,7 +38,7 @@ export class PreparedStatement {
   async addBatch(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.ps
-        .addBatch()
+        .addBatchPromise()
         .then(() => {
           resolve();
         })
@@ -58,7 +52,7 @@ export class PreparedStatement {
   async clearParameters(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.ps
-        .clearParameters()
+        .clearParametersPromise()
         .then(() => {
           resolve();
         })
@@ -72,9 +66,9 @@ export class PreparedStatement {
   async execute(): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       this.ps
-        .execute()
-        .then((result: ResultSet | PromiseLike<ResultSet>) => {
-          resolve(result);
+        .executePromise()
+        .then((result: IResultSet) => {
+          resolve(new ResultSet(result));
         })
         .catch((err) => {
           logger.error(err);
@@ -86,7 +80,7 @@ export class PreparedStatement {
   async executeBatch(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.ps
-        .executeBatch()
+        .executeBatchPromise()
         .then(() => {
           resolve();
         })
@@ -97,12 +91,12 @@ export class PreparedStatement {
     });
   }
 
-  async executeQuery(): Promise<IResultSet> {
+  async executeQuery(): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       this.ps
-        .executeQuery()
+        .executeQueryPromise()
         .then((result: IResultSet) => {
-          return resolve(result);
+          return resolve(new ResultSet(result));
         })
         .catch((err) => {
           logger.error(err);
@@ -114,7 +108,7 @@ export class PreparedStatement {
   async executeUpdate(): Promise<number> {
     return new Promise((resolve, reject) => {
       this.ps
-        .executeUpdate()
+        .executeUpdatePromise()
         .then((result: number) => {
           return resolve(result);
         })
@@ -128,9 +122,9 @@ export class PreparedStatement {
   async getMetaData(): Promise<ResultSetMetaData> {
     return new Promise((resolve, reject) => {
       this.ps
-        .getMetaData()
-        .then((result: ResultSetMetaData) => {
-          return resolve(result);
+        .getMetaDataPromise()
+        .then((result: IResultSetMetaData) => {
+          return resolve(new ResultSetMetaData(result));
         })
         .catch((err) => {
           logger.error(err);
@@ -142,9 +136,9 @@ export class PreparedStatement {
   async getParameterMetaData(): Promise<ResultSetMetaData> {
     return new Promise((resolve, reject) => {
       this.ps
-        .getParameterMetaData()
-        .then((result: ResultSetMetaData) => {
-          return resolve(result);
+        .getParameterMetaDataPromise()
+        .then((result: IResultSetMetaData) => {
+          return resolve(new ResultSetMetaData(result));
         })
         .catch((err) => {
           logger.error(err);
@@ -165,7 +159,7 @@ export class PreparedStatement {
     const bigdecimalValue = value
       ? java.newInstanceSync('java.math.BigDecimal', value)
       : 0;
-    return this.ps.setBigDecimal(index, bigdecimalValue);
+    return this.ps.setBigDecimalSync(index, bigdecimalValue);
   }
 
   setBinaryStream(index, val, length, callback) {
@@ -179,13 +173,13 @@ export class PreparedStatement {
     callback(new Error('NOT IMPLEMENTED'));
   }
   setBoolean(index: number, val: boolean) {
-    return this.ps.setBoolean(index, val);
+    return this.ps.setBooleanSync(index, val);
   }
   setByte(index: any, val: any) {
-    return this.ps.setByte(index, val);
+    return this.ps.setByteSync(index, val);
   }
   setBytes(index: any, val: any) {
-    return this.ps.setBytes(index, val);
+    return this.ps.setBytesSync(index, val);
   }
 
   setCharacterStream(index, val, length, callback) {
@@ -202,34 +196,34 @@ export class PreparedStatement {
     const date = value
       ? java.callStaticMethodSync('java.sql.Date', 'valueOf', value)
       : null;
-    return this.ps.setDate(index, date);
+    return this.ps.setDateSync(index, date);
   }
   setDouble(index: number, value: number): void {
-    return this.ps.setDouble(index, value);
+    return this.ps.setDoubleSync(index, value);
   }
   setFloat(index: number, value: number): void {
-    return this.ps.setFloat(index, value);
+    return this.ps.setFloatSync(index, value);
   }
   setInt(index: number, value: number): void {
-    return this.ps.setInt(index, value);
+    return this.ps.setIntSync(index, value);
   }
   setLong(index: number, value: string): void {
     const longValue = value ? java.newInstanceSync('java.lang.Long', value) : 0;
-    return this.ps.setLong(index, longValue);
+    return this.ps.setLongSync(index, longValue);
   }
   setString(index: number, value: string): void {
-    return this.ps.setString(index, value);
+    return this.ps.setStringSync(index, value);
   }
   setTime(index: number, value: string): void {
     const time = value
       ? java.callStaticMethodSync('java.sql.Time', 'valueOf', value)
       : null;
-    return this.ps.setTime(index, time);
+    return this.ps.setTimeSync(index, time);
   }
   setTimestamp(index: number, value: string): void {
     const timestamp = value
       ? java.callStaticMethodSync('java.sql.Timestamp', 'valueOf', value)
       : null;
-    return this.ps.setTimestamp(index, timestamp);
+    return this.ps.setTimestampSync(index, timestamp);
   }
 }

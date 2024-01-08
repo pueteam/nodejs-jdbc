@@ -1,24 +1,287 @@
 import { IResultSet, ResultSet } from './ResultSet';
-import { Connection } from './Connection';
+import { Connection, IConnection } from './Connection';
 import { getInstance, events } from './jinst';
-import {
-  isArray,
-  isBoolean,
-  isInteger,
-  isNull,
-  isString,
-  isUndefined,
-} from './Helper';
-import PromisifyAll from './PromisifyAll';
 
 const java = getInstance();
 
-export interface IDatabaseMetadata {}
+export interface IDatabaseMetadata {
+  allProceduresAreCallableSync(): boolean;
+  allTablesAreSelectableSync(): boolean;
+  autoCommitFailureClosesAllResultSetsSync(): boolean;
+  dataDefinitionCausesTransactionCommitSync(): boolean;
+  dataDefinitionIgnoredInTransactionsSync(): boolean;
+  deletesAreDetectedSync(type: number): boolean;
+  doesMaxRowSizeIncludeBlobsSync(): boolean;
+  generatedKeyAlwaysReturnedSync(): boolean;
+  getAttributesPromise(
+    catalog: string,
+    schemaPattern: string,
+    typeNamePattern: string,
+    attributeNamePattern: string,
+  ): Promise<IResultSet>;
+  getBestRowIdentifierPromise(
+    catalog: string,
+    schema: string,
+    table: string,
+    scope: number,
+    nullable: boolean,
+  ): Promise<IResultSet>;
+  getCatalogsPromise(): Promise<IResultSet>;
+  getCatalogSeparatorSync(): string;
+  getCatalogTermSync(): string;
+  getClientInfoPropertiesPromise(): Promise<IResultSet>;
+  getColumnPrivilegesPromise(
+    catalog: string,
+    schema: string,
+    table: string,
+    columnNamePattern: string,
+  ): Promise<IResultSet>;
+  getColumnsPromise(
+    catalog: string,
+    schemaPattern: string,
+    tableNamePattern: string,
+    columnNamePattern: string,
+  ): Promise<IResultSet>;
+  getConnectionPromise(): Promise<IConnection>;
+  getCrossReferencePromise(
+    parentCatalog: string,
+    parentSchema: string,
+    parentTable: string,
+    foreignCatalog: string,
+    foreignSchema: string,
+    foreignTable: string,
+  ): Promise<IResultSet>;
+  getDatabaseMajorVersionSync(): number;
+  getDatabaseMinorVersionSync(): number;
+  getDatabaseProductNameSync(): string;
+  getDatabaseProductVersionSync(): string;
+  getDefaultTransactionIsolationSync(): number;
+  getDriverMajorVersionSync(): number;
+  getDriverMinorVersionSync(): number;
+  getDriverNameSync(): string;
+  getDriverVersionSync(): string;
+  getExportedKeysPromise(
+    catalog: string,
+    schema: string,
+    table: string,
+  ): Promise<IResultSet>;
+  getExtraNameCharactersSync(): string;
+  getFunctionColumnsPromise(
+    catalog: string,
+    schemaPattern: string,
+    functionNamePattern: string,
+    columnNamePattern: string,
+  ): Promise<IResultSet>;
+  getFunctionsPromise(
+    catalog: string,
+    schemaPattern: string,
+    functionNamePattern: string,
+  ): Promise<IResultSet>;
+  getIdentifierQuoteStringSync(): string;
+  getImportedKeysPromise(
+    catalog: string,
+    schema: string,
+    table: string,
+  ): Promise<IResultSet>;
+  getIndexInfoPromise(
+    catalog: string,
+    schema: string,
+    table: string,
+    unique: boolean,
+    approximate: boolean,
+  ): Promise<IResultSet>;
+  getJDBCMajorVersionSync(): number;
+  getJDBCMinorVersionSync(): number;
+  getMaxBinaryLiteralLengthSync(): number;
+  getMaxCatalogNameLengthSync(): number;
+  getMaxCharLiteralLengthSync(): number;
+  getMaxColumnNameLengthSync(): number;
+  getMaxColumnsInGroupBySync(): number;
+  getMaxColumnsInIndexSync(): number;
+  getMaxColumnsInOrderBySync(): number;
+  getMaxColumnsInSelectSync(): number;
+  getMaxColumnsInTableSync(): number;
+  getMaxConnectionsSync(): number;
+  getMaxCursorNameLengthSync(): number;
+  getMaxIndexLengthSync(): number;
+  getMaxProcedureNameLengthSync(): number;
+  getMaxRowSizeSync(): number;
+  getMaxSchemaNameLengthSync(): number;
+  getMaxStatementLengthSync(): number;
+  getMaxStatementsSync(): number;
+  getMaxTableNameLengthSync(): number;
+  getMaxTablesInSelectSync(): number;
+  getMaxUserNameLengthSync(): number;
+  getNumericFunctionsSync(): string;
+  getPrimaryKeysPromise(
+    catalog: string,
+    schema: string,
+    table: string,
+  ): Promise<IResultSet>;
+  getProcedureColumnsPromise(
+    catalog: string,
+    schemaPattern: string,
+    procedureNamePattern: string,
+    columnNamePattern: string,
+  ): Promise<IResultSet>;
+  getProceduresPromise(
+    catalog: string,
+    schemaPattern: string,
+    procedureNamePattern: string,
+  ): Promise<IResultSet>;
+  getProcedureTermSync(): Promise<IResultSet>;
+  getPseudoColumnsPromise(
+    catalog: string,
+    schemaPattern: string,
+    tableNamePattern: string,
+    columnNamePattern: string,
+  ): Promise<IResultSet>;
+  getResultSetHoldabilitySync(): number;
+  getRowIdLifetimeSync(): any;
+  getSchemasPromise(
+    catalog: string,
+    schemaPattern: string,
+  ): Promise<IResultSet>;
+  getSchemasPromise(): Promise<IResultSet>;
+  getTablesPromise(
+    catalog: string,
+    schemaPattern: string,
+    tableNamePattern: string,
+    types: string[],
+  ): Promise<IResultSet>;
+  getSchemaTermSync(): string;
+  getSearchStringEscapeSync(): string;
+  getSQLKeywordsSync(): string;
+  getSQLStateTypeSync(): number;
+  getStringFunctionsSync(): string;
+  getSuperTablesPromise(
+    catalog: string,
+    schemaPattern: string,
+    tableNamePattern: string,
+  ): Promise<IResultSet>;
+  getSuperTypesPromise(
+    catalog: string,
+    schemaPattern: string,
+    typeNamePattern: string,
+  ): Promise<IResultSet>;
+  getSystemFunctionsSync(): string;
+  getTablePrivilegesPromise(
+    catalog: string,
+    schemaPattern: string,
+    tableNamePattern: string,
+  ): Promise<IResultSet>;
+  getTableTypesPromise(): Promise<IResultSet>;
+  getTimeDateFunctionsSync(): string;
+  getTypeInfoPromise(): Promise<IResultSet>;
+  getUDTsPromise(
+    catalog: string,
+    schemaPattern: string,
+    typeNamePattern: string,
+    types: number[],
+  ): Promise<IResultSet>;
+  getURLSync(): string;
+  getUserNameSync(): string;
+  getVersionColumnsPromise(
+    catalog: string,
+    schema: string,
+    table: string,
+  ): Promise<IResultSet>;
+  insertsAreDetectedSync(type: number): boolean;
+  isCatalogAtStartSync(): boolean;
+  isReadOnlySync(): boolean;
+  locatorsUpdateCopySync(): boolean;
+  nullPlusNonNullIsNullSync(): boolean;
+  nullsAreSortedAtEndSync(): boolean;
+  nullsAreSortedAtStartSync(): boolean;
+  nullsAreSortedHighSync(): boolean;
+  nullsAreSortedLowSync(): boolean;
+  othersDeletesAreVisibleSync(type: number): boolean;
+  othersInsertsAreVisibleSync(type: number): boolean;
+  othersUpdatesAreVisibleSync(type: number): boolean;
+  ownDeletesAreVisibleSync(type: number): boolean;
+  ownInsertsAreVisibleSync(type: number): boolean;
+  ownUpdatesAreVisibleSync(type: number): boolean;
+  storesLowerCaseIdentifiersSync(): boolean;
+  storesLowerCaseQuotedIdentifiersSync(): boolean;
+  storesMixedCaseIdentifiersSync(): boolean;
+  storesMixedCaseQuotedIdentifiersSync(): boolean;
+  storesUpperCaseIdentifiersSync(): boolean;
+  storesUpperCaseQuotedIdentifiersSync(): boolean;
+  supportsAlterTableWithAddColumnSync(): boolean;
+  supportsAlterTableWithDropColumnSync(): boolean;
+  supportsANSI92EntryLevelSQLSync(): boolean;
+  supportsANSI92FullSQLSync(): boolean;
+  supportsANSI92IntermediateSQLSync(): boolean;
+  supportsBatchUpdatesSync(): boolean;
+  supportsCatalogsInDataManipulationSync(): boolean;
+  supportsCatalogsInIndexDefinitionsSync(): boolean;
+  supportsCatalogsInPrivilegeDefinitionsSync(): boolean;
+  supportsCatalogsInProcedureCallsSync(): boolean;
+  supportsCatalogsInTableDefinitionsSync(): boolean;
+  supportsColumnAliasingSync(): boolean;
+  supportsConvertSync(fromType: number, toType: number): boolean;
+  supportsCoreSQLGrammarSync(): boolean;
+  supportsCorrelatedSubqueriesSync(): boolean;
+  supportsDataDefinitionAndDataManipulationTransactionsSync(): boolean;
+  supportsDataManipulationTransactionsOnlySync(): boolean;
+  supportsDifferentTableCorrelationNamesSync(): boolean;
+  supportsExpressionsInOrderBySync(): boolean;
+  supportsExtendedSQLGrammarSync(): boolean;
+  supportsFullOuterJoinsSync(): boolean;
+  supportsGetGeneratedKeysSync(): boolean;
+  supportsGroupBySync(): boolean;
+  supportsGroupByBeyondSelectSync(): boolean;
+  supportsGroupByUnrelatedSync(): boolean;
+  supportsIntegrityEnhancementFacilitySync(): boolean;
+  supportsLikeEscapeClauseSync(): boolean;
+  supportsLimitedOuterJoinsSync(): boolean;
+  supportsMinimumSQLGrammarSync(): boolean;
+  supportsMixedCaseIdentifiersSync(): boolean;
+  supportsMixedCaseQuotedIdentifiersSync(): boolean;
+  supportsMultipleOpenResultsSync(): boolean;
+  supportsMultipleResultSetsSync(): boolean;
+  supportsMultipleTransactionsSync(): boolean;
+  supportsNamedParametersSync(): boolean;
+  supportsNonNullableColumnsSync(): boolean;
+  supportsOpenCursorsAcrossCommitSync(): boolean;
+  supportsOpenCursorsAcrossRollbackSync(): boolean;
+  supportsOpenStatementsAcrossCommitSync(): boolean;
+  supportsOpenStatementsAcrossRollbackSync(): boolean;
+  supportsOrderByUnrelatedSync(): boolean;
+  supportsOuterJoinsSync(): boolean;
+  supportsPositionedDeleteSync(): Promise<IResultSet>;
+  supportsPositionedUpdateSync(): Promise<IResultSet>;
+  supportsResultSetConcurrencySync(type: number, concurrency: number): boolean;
+  supportsResultSetHoldabilitySync(holdability: number): boolean;
+  supportsResultSetTypeSync(type: number): boolean;
+  supportsSavepointsSync(): boolean;
+  supportsSchemasInDataManipulationSync(): boolean;
+  supportsSchemasInIndexDefinitionsSync(): boolean;
+  supportsSchemasInPrivilegeDefinitionsSync(): boolean;
+  supportsSchemasInProcedureCallsSync(): boolean;
+  supportsSchemasInTableDefinitionsSync(): boolean;
+  supportsSelectForUpdateSync(): boolean;
+  supportsStatementPoolingSync(): boolean;
+  supportsStoredFunctionsUsingCallSyntaxSync(): boolean;
+  supportsStoredProceduresSync(): boolean;
+  supportsSubqueriesInComparisonsSync(): boolean;
+  supportsSubqueriesInExistsSync(): boolean;
+  supportsSubqueriesInInsSync(): boolean;
+  supportsSubqueriesInQuantifiedsSync(): boolean;
+  supportsTableCorrelationNamesSync(): boolean;
+  supportsTransactionIsolationLevelSync(level: number): boolean;
+  supportsTransactionsSync(): boolean;
+  supportsUnionSync(): boolean;
+  supportsUnionAllSync(): boolean;
+  updatesAreDetectedSync(type: number): boolean;
+  usesLocalFilePerTableSync(): boolean;
+  usesLocalFilesSync(): boolean;
+}
 
 export class DatabaseMetaData {
-  private dbm: any;
+  private dbm: IDatabaseMetadata;
   constructor(databaseMetaData: IDatabaseMetadata) {
-    this.dbm = PromisifyAll(databaseMetaData) as IDatabaseMetadata;
+    this.dbm = databaseMetaData;
   }
 
   /**
@@ -26,7 +289,7 @@ export class DatabaseMetaData {
    *
    * @param {String} catalog - A  catalog name; must match the catalog name as it is stored in the database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
-   * @returns {ResultSet} ResultSet object in which each row is a schema description
+   * @returns {Promise<ResultSet>} ResultSet object in which each row is a schema description
    */
   async getSchemas(
     catalog?: string,
@@ -35,7 +298,7 @@ export class DatabaseMetaData {
     return new Promise((resolve, reject) => {
       if (catalog) {
         this.dbm
-          .getSchemasAsync(catalog, schemaPattern)
+          .getSchemasPromise(catalog, schemaPattern)
           .then((result: IResultSet) => {
             return resolve(new ResultSet(result));
           })
@@ -44,7 +307,7 @@ export class DatabaseMetaData {
           });
       }
       this.dbm
-        .getSchemasAsync()
+        .getSchemasPromise()
         .then((result: IResultSet) => {
           return resolve(new ResultSet(result));
         })
@@ -61,7 +324,7 @@ export class DatabaseMetaData {
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} tableNamePattern - A table name pattern; must match the table name as it is stored in the database
    * @param {String[]} types -  A list of table types, which must be from the list of table types returned from getTableTypes(),to include; null returns all types
-   * @returns {ResultSet} each row is a table description
+   * @returns {Promise<ResultSet>} each row is a table description
    */
 
   async getTables(
@@ -72,7 +335,7 @@ export class DatabaseMetaData {
   ): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       this.dbm
-        .getTablesAsync(catalog, schemaPattern, tableNamePattern, types)
+        .getTablesPromise(catalog, schemaPattern, tableNamePattern, types)
         .then((result: IResultSet) => {
           return resolve(new ResultSet(result));
         })
@@ -182,7 +445,7 @@ export class DatabaseMetaData {
   ): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       this.dbm
-        .getAttributesAsync(
+        .getAttributesPromise(
           catalog,
           schemaPattern,
           typeNamePattern,
@@ -217,7 +480,7 @@ export class DatabaseMetaData {
   ): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       this.dbm
-        .getBestRowIdentifierAsync(catalog, schema, table, scope, nullable)
+        .getBestRowIdentifierPromise(catalog, schema, table, scope, nullable)
         .then((result: IResultSet) => {
           return resolve(new ResultSet(result));
         })
@@ -235,7 +498,7 @@ export class DatabaseMetaData {
   async getCatalogs(): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       this.dbm
-        .getCatalogsAsync()
+        .getCatalogsPromise()
         .then((result: IResultSet) => {
           return resolve(new ResultSet(result));
         })
@@ -260,7 +523,7 @@ export class DatabaseMetaData {
    *
    * @returns {String} the vendor term for "catalog"
    */
-  getCatalogTerm() {
+  getCatalogTerm(): string {
     return this.dbm.getCatalogTermSync();
   }
 
@@ -272,7 +535,7 @@ export class DatabaseMetaData {
   async getClientInfoProperties(): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       this.dbm
-        .getClientInfoPropertiesAsync()
+        .getClientInfoPropertiesPromise()
         .then((result: IResultSet) => resolve(new ResultSet(result)))
         .catch((error) => reject(error));
     });
@@ -295,7 +558,7 @@ export class DatabaseMetaData {
   ): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       this.dbm
-        .getColumnPrivilegesAsync(catalog, schema, table, columnNamePattern)
+        .getColumnPrivilegesPromise(catalog, schema, table, columnNamePattern)
         .then((result: IResultSet) => resolve(new ResultSet(result)))
         .catch((error) => reject(error));
     });
@@ -308,58 +571,46 @@ export class DatabaseMetaData {
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} tableNamePattern - A table name pattern; must match the table name as it is stored in the database
    * @param {String} columnNamePattern - A column name pattern; must match the column name as it is stored in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a column description
+   * @returns {Promise<ResultSet>} each row is a column description
    */
-  getColumns(
-    catalog,
-    schemaPattern,
-    tableNamePattern,
-    columnNamePattern,
-    callback,
-  ) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(tableNamePattern) ||
-        isUndefined(tableNamePattern) ||
-        isString(tableNamePattern)) &&
-      (isNull(columnNamePattern) ||
-        isUndefined(columnNamePattern) ||
-        isString(columnNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getColumns(
-      catalog,
-      schemaPattern,
-      tableNamePattern,
-      columnNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getColumns(
+    catalog: string,
+    schemaPattern: string,
+    tableNamePattern: string,
+    columnNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getColumnsPromise(
+          catalog,
+          schemaPattern,
+          tableNamePattern,
+          columnNamePattern,
+        )
+        .then((result: IResultSet) => {
+          resolve(new ResultSet(result));
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 
   /**
    * Retrieves the connection that produced this metadata object.
    *
-   * @param {Function} callback
-   * @returns {Connection} Via callback: the connection that produced this metadata object
+   * @returns {Promise<Connection>} the connection that produced this metadata object
    */
-  getConnection(callback) {
-    this.dbm.getConnection((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, new Connection(result));
+  getConnection(): Promise<Connection> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getConnectionPromise()
+        .then((result: IConnection) => {
+          resolve(new Connection(result));
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
   }
 
@@ -374,187 +625,110 @@ export class DatabaseMetaData {
    * @param {String} foreignCatalog - A catalog name; must match the catalog name as it is stored in the database; "" retrieves those without a catalog; null means drop catalog name from the selection criteria
    * @param {String} foreignSchema - A schema name; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means drop schema name from the selection criteria
    * @param {String} foreignTable - The name of the table that imports the key; must match the table name as it is stored in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a foreign key column description
+   * @returns {Promise<ResultSet>} each row is a foreign key column description
    */
-  getCrossReference(
-    parentCatalog,
-    parentSchema,
-    parentTable,
-    foreignCatalog,
-    foreignSchema,
-    foreignTable,
-    callback,
-  ) {
-    const validParams =
-      (isNull(parentCatalog) ||
-        isUndefined(parentCatalog) ||
-        isString(parentCatalog)) &&
-      (isNull(parentSchema) ||
-        isUndefined(parentSchema) ||
-        isString(parentSchema)) &&
-      isString(parentTable) &&
-      (isNull(foreignCatalog) ||
-        isUndefined(foreignCatalog) ||
-        isString(foreignCatalog)) &&
-      (isNull(foreignSchema) ||
-        isUndefined(foreignSchema) ||
-        isString(foreignSchema)) &&
-      isString(foreignTable);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getCrossReference(
-      parentCatalog,
-      parentSchema,
-      parentTable,
-      foreignCatalog,
-      foreignSchema,
-      foreignTable,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getCrossReference(
+    parentCatalog: string,
+    parentSchema: string,
+    parentTable: string,
+    foreignCatalog: string,
+    foreignSchema: string,
+    foreignTable: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getCrossReferencePromise(
+          parentCatalog,
+          parentSchema,
+          parentTable,
+          foreignCatalog,
+          foreignSchema,
+          foreignTable,
+        )
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((error) => reject(error));
+    });
   }
 
   /**
    * Retrieves the major version number of the underlying database.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the underlying database's major version
+   * @returns {Number} the underlying database's major version
    */
-  getDatabaseMajorVersion(callback) {
-    this.dbm.getDatabaseMajorVersion((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getDatabaseMajorVersion(): number {
+    return this.dbm.getDatabaseMajorVersionSync();
   }
 
   /**
    * Retrieves the minor version number of the underlying database.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: underlying database's minor version
+   * @returns {Number} underlying database's minor version
    */
-  getDatabaseMinorVersion(callback) {
-    this.dbm.getDatabaseMinorVersion((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getDatabaseMinorVersion(): number {
+    return this.dbm.getDatabaseMinorVersionSync();
   }
 
   /**
    * Retrieves the name of this database product.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: database product name
+   * @returns {String} database product name
    */
-  getDatabaseProductName(callback) {
-    this.dbm.getDatabaseProductName((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getDatabaseProductName(): string {
+    return this.dbm.getDatabaseProductNameSync();
   }
 
   /**
    * Retrieves the version number of this database product.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: database version number
+   * @returns {String} database version number
    */
-  getDatabaseProductVersion(callback) {
-    this.dbm.getDatabaseProductVersion((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getDatabaseProductVersion(): string {
+    return this.dbm.getDatabaseProductVersionSync();
   }
 
   /**
    * Retrieves this database's default transaction isolation level.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the default isolation level
+   * @returns {Number} the default isolation level
    */
-  getDefaultTransactionIsolation(callback) {
-    this.dbm.getDefaultTransactionIsolation((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getDefaultTransactionIsolation(): number {
+    return this.dbm.getDefaultTransactionIsolationSync();
   }
 
   /**
    * Retrieves this JDBC driver's major version number.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: JDBC driver major version
+   * @returns {Number} JDBC driver major version
    */
-  getDriverMajorVersion(callback) {
-    this.dbm.getDriverMajorVersion((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getDriverMajorVersion(): number {
+    return this.dbm.getDriverMajorVersionSync();
   }
 
   /**
    * Retrieves this JDBC driver's minor version number.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: JDBC driver minor version
+   * @returns {Number} JDBC driver minor version
    */
-  getDriverMinorVersion(callback) {
-    this.dbm.getDriverMinorVersion((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getDriverMinorVersion(): number {
+    return this.dbm.getDriverMinorVersionSync();
   }
 
   /**
    * Retrieves the name of this JDBC driver.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: JDBC driver name
+   * @returns {String} JDBC driver name
    */
-  getDriverName(callback) {
-    this.dbm.getDriverName((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getDriverName(): string {
+    return this.dbm.getDriverNameSync();
   }
 
   /**
    * Retrieves the version number of this JDBC driver as a String.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: JDBC driver version
+   * @returns {String} JDBC driver version
    */
-  getDriverVersion(callback) {
-    this.dbm.getDriverVersion((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getDriverVersion(): string {
+    return this.dbm.getDriverVersionSync();
   }
 
   /**
@@ -564,24 +738,20 @@ export class DatabaseMetaData {
    * @param {String} catalog - A catalog name; must match the catalog name as it is stored in this database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schema - A schema name; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} table - A table name; must match the table name as it is stored in this database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: a ResultSet object in which each row is a foreign key column description
+   * @returns {Promise<ResultSet>} a ResultSet object in which each row is a foreign key column description
    */
-  getExportedKeys(catalog, schema, table, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schema) || isUndefined(schema) || isString(schema)) &&
-      isString(table);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getExportedKeys(catalog, schema, table, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, new ResultSet(result));
+  async getExportedKeys(
+    catalog: string,
+    schema: string,
+    table: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getExportedKeysPromise(catalog, schema, table)
+        .then((result: IResultSet) => {
+          resolve(new ResultSet(result));
+        })
+        .catch((error) => reject(error));
     });
   }
 
@@ -589,16 +759,10 @@ export class DatabaseMetaData {
    * Retrieves all the "extra" characters that can be used in unquoted identifier
    * names (those beyond a-z, A-Z, 0-9 and _).
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: the string containing the extra characters
+   * @returns {String} the string containing the extra characters
    */
-  getExtraNameCharacters(callback) {
-    this.dbm.getExtraNameCharacters((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getExtraNameCharacters(): string {
+    return this.dbm.getExtraNameCharactersSync();
   }
 
   /**
@@ -609,44 +773,25 @@ export class DatabaseMetaData {
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} functionNamePattern - A procedure name pattern; must match the function name as it is stored in the database
    * @param {String} columnNamePattern - A column name pattern; must match the column name as it is stored in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row describes a user function parameter, column or return type
+   * @returns {Promise<ResultSet>} each row describes a user function parameter, column or return type
    */
-  getFunctionColumns(
-    catalog,
-    schemaPattern,
-    functionNamePattern,
-    columnNamePattern,
-    callback,
-  ) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(functionNamePattern) ||
-        isUndefined(functionNamePattern) ||
-        isString(functionNamePattern)) &&
-      (isNull(columnNamePattern) ||
-        isUndefined(columnNamePattern) ||
-        isString(columnNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getFunctionColumns(
-      catalog,
-      schemaPattern,
-      functionNamePattern,
-      columnNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getFunctionColumns(
+    catalog: string,
+    schemaPattern: string,
+    functionNamePattern: string,
+    columnNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getFunctionColumnsPromise(
+          catalog,
+          schemaPattern,
+          functionNamePattern,
+          columnNamePattern,
+        )
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((error) => reject(error));
+    });
   }
 
   /**
@@ -656,49 +801,28 @@ export class DatabaseMetaData {
    * @param {String} catalog - A  catalog name; must match the catalog name as it is stored in the database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} functionNamePattern - A procedure name pattern; must match the function name as it is stored in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a function description
+   * @returns {Promise<ResultSet>} each row is a function description
    */
-  getFunctions(catalog, schemaPattern, functionNamePattern, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(functionNamePattern) ||
-        isUndefined(functionNamePattern) ||
-        isString(functionNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getFunctions(
-      catalog,
-      schemaPattern,
-      functionNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getFunctions(
+    catalog: string,
+    schemaPattern: string,
+    functionNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getFunctionsPromise(catalog, schemaPattern, functionNamePattern)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((error) => reject(error));
+    });
   }
 
   /**
    * Retrieves the string used to quote SQL identifiers.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: the quoting string or a space if quoting is not supported
+   * @returns {String} the quoting string or a space if quoting is not supported
    */
-  getIdentifierQuoteString(callback) {
-    this.dbm.getIdentifierQuoteString((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getIdentifierQuoteString(): string {
+    return this.dbm.getIdentifierQuoteStringSync();
   }
 
   /**
@@ -709,24 +833,18 @@ export class DatabaseMetaData {
    * @param {String} catalog - A catalog name; must match the catalog name as it is stored in this database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schema - A schema name; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} table - A table name; must match the table name as it is stored in this database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a primary key column description
+   * @returns {Promise<ResultSet>} each row is a primary key column description
    */
-  getImportedKeys(catalog, schema, table, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schema) || isUndefined(schema) || isString(schema)) &&
-      isString(table);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getImportedKeys(catalog, schema, table, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, new ResultSet(result));
+  async getImportedKeys(
+    catalog: string,
+    schema: string,
+    table: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getImportedKeysPromise(catalog, schema, table)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((error) => reject(error));
     });
   }
 
@@ -738,397 +856,246 @@ export class DatabaseMetaData {
    * @param {String} table - A table name; must match the table name as it is stored in this database
    * @param {Boolean} unique - When true, return only indices for unique values; when false, return indices regardless of whether unique or not
    * @param {Boolean} approximate - When true, result is allowed to reflect approximate or out of data values; when false, results are requested to be accurate
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is an index column description
+   * @returns {Promise<ResultSet>} each row is an index column description
    */
-  getIndexInfo(catalog, schema, table, unique, approximate, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schema) || isUndefined(schema) || isString(schema)) &&
-      isString(table) &&
-      isBoolean(unique) &&
-      isBoolean(approximate);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getIndexInfo(
-      catalog,
-      schema,
-      table,
-      unique,
-      approximate,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getIndexInfo(
+    catalog: string,
+    schema: string,
+    table: string,
+    unique: boolean,
+    approximate: boolean,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getIndexInfoPromise(catalog, schema, table, unique, approximate)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((error) => reject(error));
+    });
   }
 
   /**
    * Retrieves the major JDBC version number for this driver.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: JDBC version major number
+   * @returns {Number} JDBC version major number
    */
-  getJDBCMajorVersion(callback) {
-    this.dbm.getJDBCMajorVersion((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getJDBCMajorVersion(): number {
+    return this.dbm.getJDBCMajorVersionSync();
   }
 
   /**
    * Retrieves the minor JDBC version number for this driver.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: JDBC version minor number
+   * @returns {Number} JDBC version minor number
    */
-  getJDBCMinorVersion(callback) {
-    this.dbm.getJDBCMinorVersion((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getJDBCMinorVersion(): number {
+    return this.dbm.getJDBCMinorVersionSync();
   }
 
   /**
    * Retrieves the maximum number of hex characters this database allows in an
    * inline binary literal.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum length (in hex characters) for a binary literal; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum length (in hex characters) for a binary literal; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxBinaryLiteralLength(callback) {
-    this.dbm.getMaxBinaryLiteralLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxBinaryLiteralLength(): number {
+    return this.dbm.getMaxBinaryLiteralLengthSync();
   }
 
   /**
    * Retrieves the maximum number of characters that this database allows in a
    * catalog name.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of characters allowed in a catalog name; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of characters allowed in a catalog name; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxCatalogNameLength(callback) {
-    this.dbm.getMaxCatalogNameLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxCatalogNameLength(): number {
+    return this.dbm.getMaxCatalogNameLengthSync();
   }
 
   /**
    * Retrieves the maximum number of characters this database allows for a
    * character literal.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of characters allowed for a character literal; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of characters allowed for a character literal; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxCharLiteralLength(callback) {
-    this.dbm.getMaxCharLiteralLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxCharLiteralLength(): number {
+    return this.dbm.getMaxCharLiteralLengthSync();
   }
 
   /**
    * Retrieves the maximum number of characters this database allows for a column
    * name.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of characters allowed for a column name; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of characters allowed for a column name; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxColumnNameLength(callback) {
-    this.dbm.getMaxColumnNameLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxColumnNameLength(): number {
+    return this.dbm.getMaxColumnNameLengthSync();
   }
 
   /**
    * Retrieves the maximum number of columns this database allows in a GROUP BY
    * clause.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of columns allowed; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of columns allowed; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxColumnsInGroupBy(callback) {
-    this.dbm.getMaxColumnsInGroupBy((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxColumnsInGroupBy(): number {
+    return this.dbm.getMaxColumnsInGroupBySync();
   }
 
   /**
    * Retrieves the maximum number of columns this database allows in an index.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of columns allowed; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of columns allowed; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxColumnsInIndex(callback) {
-    this.dbm.getMaxColumnsInIndex((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxColumnsInIndex(): number {
+    return this.dbm.getMaxColumnsInIndexSync();
   }
 
   /**
    * Retrieves the maximum number of columns this database allows in an ORDER BY
    * clause.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of columns allowed; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of columns allowed; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxColumnsInOrderBy(callback) {
-    this.dbm.getMaxColumnsInOrderBy((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxColumnsInOrderBy(): number {
+    return this.dbm.getMaxColumnsInOrderBySync();
   }
 
   /**
    * Retrieves the maximum number of columns this database allows in a SELECT
    * list.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of columns allowed; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of columns allowed; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxColumnsInSelect(callback) {
-    this.dbm.getMaxColumnsInSelect((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxColumnsInSelect(): number {
+    return this.dbm.getMaxColumnsInSelectSync();
   }
 
   /**
    * Retrieves the maximum number of columns this database allows in a table.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of columns allowed; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of columns allowed; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxColumnsInTable(callback) {
-    this.dbm.getMaxColumnsInTable((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxColumnsInTable(): number {
+    return this.dbm.getMaxColumnsInTableSync();
   }
 
   /**
    * Retrieves the maximum number of concurrent connections to this database that
    * are possible.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of active connections possible at one time; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of active connections possible at one time; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxConnections(callback) {
-    this.dbm.getMaxConnections((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxConnections(): number {
+    return this.dbm.getMaxConnectionsSync();
   }
 
   /**
    * Retrieves the maximum number of characters that this database allows in a
    * cursor name.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of characters allowed in a cursor name; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of characters allowed in a cursor name; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxCursorNameLength(callback) {
-    this.dbm.getMaxCursorNameLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxCursorNameLength(): number {
+    return this.dbm.getMaxCursorNameLengthSync();
   }
 
   /**
    * Retrieves the maximum number of bytes this database allows for an index,
    * including all of the parts of the index.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of bytes allowed; this limit includes the composite of all the constituent parts of the index; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of bytes allowed; this limit includes the composite of all the constituent parts of the index; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxIndexLength(callback) {
-    this.dbm.getMaxIndexLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxIndexLength(): number {
+    return this.dbm.getMaxIndexLengthSync();
   }
 
   /**
    * Retrieves the maximum number of characters that this database allows in a
    * procedure name.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of characters allowed in a procedure name; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of characters allowed in a procedure name; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxProcedureNameLength(callback) {
-    this.dbm.getMaxProcedureNameLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxProcedureNameLength(): number {
+    return this.dbm.getMaxProcedureNameLengthSync();
   }
 
   /**
    * Retrieves the maximum number of bytes this database allows in a single row.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of bytes allowed for a row; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of bytes allowed for a row; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxRowSize(callback) {
-    this.dbm.getMaxRowSize((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxRowSize(): number {
+    return this.dbm.getMaxRowSizeSync();
   }
 
   /**
    * Retrieves the maximum number of characters that this database allows in a
    * schema name.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of characters allowed in a schema name; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of characters allowed in a schema name; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxSchemaNameLength(callback) {
-    this.dbm.getMaxSchemaNameLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxSchemaNameLength(): number {
+    return this.dbm.getMaxSchemaNameLengthSync();
   }
 
   /**
    * Retrieves the maximum number of characters this database allows in an SQL
    * statement.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of characters allowed for an SQL statement; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of characters allowed for an SQL statement; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxStatementLength(callback) {
-    this.dbm.getMaxStatementLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxStatementLength(): number {
+    return this.dbm.getMaxStatementLengthSync();
   }
 
   /**
    * Retrieves the maximum number of active statements to this database that can
    * be open at the same time.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of statements that can be open at one time; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of statements that can be open at one time; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxStatements(callback) {
-    this.dbm.getMaxStatements((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxStatements(): number {
+    return this.dbm.getMaxStatementsSync();
   }
 
   /**
    * Retrieves the maximum number of characters this database allows in a table
    * name.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of characters allowed for a table name; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of characters allowed for a table name; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxTableNameLength(callback) {
-    this.dbm.getMaxTableNameLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxTableNameLength(): number {
+    return this.dbm.getMaxTableNameLengthSync();
   }
 
   /**
    * Retrieves the maximum number of tables this database allows in a SELECT
    * statement.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of tables allowed in a SELECT statement; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of tables allowed in a SELECT statement; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxTablesInSelect(callback) {
-    this.dbm.getMaxTablesInSelect((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxTablesInSelect(): number {
+    return this.dbm.getMaxTablesInSelectSync();
   }
 
   /**
    * Retrieves the maximum number of characters this database allows in a user
    * name.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the maximum number of characters allowed for a user name; a result of zero means that there is no limit or the limit is not known
+   * @returns {Number} the maximum number of characters allowed for a user name; a result of zero means that there is no limit or the limit is not known
    */
-  getMaxUserNameLength(callback) {
-    this.dbm.getMaxUserNameLength((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getMaxUserNameLength(): number {
+    return this.dbm.getMaxUserNameLengthSync();
   }
 
   /**
    * Retrieves a comma-separated list of math functions available with this
    * database.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: the list of math functions supported by this database
+   * @returns {String} the list of math functions supported by this database
    */
-  getNumericFunctions(callback) {
-    this.dbm.getNumericFunctions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getNumericFunctions(): string {
+    return this.dbm.getNumericFunctionsSync();
   }
 
   /**
@@ -1137,24 +1104,18 @@ export class DatabaseMetaData {
    * @param {String} catalog - A catalog name; must match the catalog name as it is stored in this database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schema - A schema name; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} table - A table name; must match the table name as it is stored in this database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a primary key column description
+   * @returns {Promise<ResultSet>} each row is a primary key column description
    */
-  getPrimaryKeys(catalog, schema, table, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schema) || isUndefined(schema) || isString(schema)) &&
-      isString(table);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getPrimaryKeys(catalog, schema, table, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, new ResultSet(result));
+  async getPrimaryKeys(
+    catalog: string,
+    schema: string,
+    table: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getPrimaryKeysPromise(catalog, schema, table)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((err) => reject(err));
     });
   }
 
@@ -1166,44 +1127,25 @@ export class DatabaseMetaData {
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} procedureNamePattern - A procedure name pattern; must match the procedure name as it is stored in the database
    * @param {String} columnNamePattern - A column name pattern; must match the column name as it is stored in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row describes a stored procedure parameter or column
+   * @returns {Promise<ResultSet>} Via callback: each row describes a stored procedure parameter or column
    */
-  getProcedureColumns(
-    catalog,
-    schemaPattern,
-    procedureNamePattern,
-    columnNamePattern,
-    callback,
-  ) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(procedureNamePattern) ||
-        isUndefined(procedureNamePattern) ||
-        isString(procedureNamePattern)) &&
-      (isNull(columnNamePattern) ||
-        isUndefined(columnNamePattern) ||
-        isString(columnNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getProcedureColumns(
-      catalog,
-      schemaPattern,
-      procedureNamePattern,
-      columnNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getProcedureColumns(
+    catalog: string,
+    schemaPattern: string,
+    procedureNamePattern: string,
+    columnNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getProcedureColumnsPromise(
+          catalog,
+          schemaPattern,
+          procedureNamePattern,
+          columnNamePattern,
+        )
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((err) => reject(err));
+    });
   }
 
   /**
@@ -1213,49 +1155,28 @@ export class DatabaseMetaData {
    * @param {String} catalog - A catalog name; must match the catalog name as it is stored in this database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} procedureNamePattern - A procedure name pattern; must match the procedure name as it is stored in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a procedure description
+   * @returns {Promise<ResultSet>} each row is a procedure description
    */
-  getProcedures(catalog, schemaPattern, procedureNamePattern, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(procedureNamePattern) ||
-        isUndefined(procedureNamePattern) ||
-        isString(procedureNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getProcedures(
-      catalog,
-      schemaPattern,
-      procedureNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  getProcedures(
+    catalog: string,
+    schemaPattern: string,
+    procedureNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getProceduresPromise(catalog, schemaPattern, procedureNamePattern)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((err) => reject(err));
+    });
   }
 
   /**
    * Retrieves the database vendor's preferred term for "procedure".
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: the vendor term for "procedure"
+   * @returns {String} the vendor term for "procedure"
    */
-  getProcedureTerm(callback) {
-    this.dbm.getProcedureTerm((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getProcedureTerm() {
+    return this.dbm.getProcedureTermSync();
   }
 
   /**
@@ -1266,59 +1187,34 @@ export class DatabaseMetaData {
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} tableNamePattern - A table name pattern; must match the table name as it is stored in the database
    * @param {String} columnNamePattern - A column name pattern; must match the column name as it is stored in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a column description
+   * @returns {Promise<ResultSet>} each row is a column description
    */
   getPseudoColumns(
-    catalog,
-    schemaPattern,
-    tableNamePattern,
-    columnNamePattern,
-    callback,
-  ) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(tableNamePattern) ||
-        isUndefined(tableNamePattern) ||
-        isString(tableNamePattern)) &&
-      (isNull(columnNamePattern) ||
-        isUndefined(columnNamePattern) ||
-        isString(columnNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getPseudoColumns(
-      catalog,
-      schemaPattern,
-      tableNamePattern,
-      columnNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+    catalog: string,
+    schemaPattern: string,
+    tableNamePattern: string,
+    columnNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getPseudoColumnsPromise(
+          catalog,
+          schemaPattern,
+          tableNamePattern,
+          columnNamePattern,
+        )
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((err) => reject(err));
+    });
   }
 
   /**
    * Retrieves this database's default holdability for ResultSet objects.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the default holdability; either ResultSet.HOLD_CURSORS_OVER_COMMIT or ResultSet.CLOSE_CURSORS_AT_COMMIT
+   * @returns {Number} the default holdability; either ResultSet.HOLD_CURSORS_OVER_COMMIT or ResultSet.CLOSE_CURSORS_AT_COMMIT
    */
-  getResultSetHoldability(callback) {
-    this.dbm.getResultSetHoldability((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getResultSetHoldability(): number {
+    return this.dbm.getResultSetHoldabilitySync();
   }
 
   /**
@@ -1326,96 +1222,60 @@ export class DatabaseMetaData {
    * if so the lifetime for which a RowId object remains valid.
    *
    * NOTE: This method should be used with caution for now. The RowIdLifetime object
-   * returned is a Java object and is not wrapped by the node-jdbc library.
+   * returned is a Java object and is not wrapped by the nodejs-jdbc library.
    *
-   * @param {Function} callback
-   * @returns {RowIdLifetime} Via callback: the status indicating the lifetime of a RowId
+   * @returns {RowIdLifetime} the status indicating the lifetime of a RowId
    */
-  getRowIdLifetime(callback) {
-    this.dbm.getRowIdLifetime((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getRowIdLifetime(): any {
+    return this.dbm.getRowIdLifetimeSync();
   }
 
   /**
    * Retrieves the database vendor's preferred term for "schema".
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: the vendor term for "schema"
+   * @returns {String} the vendor term for "schema"
    */
-  getSchemaTerm(callback) {
-    this.dbm.getSchemaTerm((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getSchemaTerm(): string {
+    return this.dbm.getSchemaTermSync();
   }
 
   /**
    * Retrieves the string that can be used to escape wildcard characters.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: the string used to escape wildcard characters
+   * @returns {String} the string used to escape wildcard characters
    */
-  getSearchStringEscape(callback) {
-    this.dbm.getSearchStringEscape((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getSearchStringEscape(): string {
+    return this.dbm.getSearchStringEscapeSync();
   }
 
   /**
    * Retrieves a comma-separated list of all of this database's SQL keywords that
    * are NOT also SQL:2003 keywords.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: the list of this database's keywords that are not also SQL:2003 keywords
+   * @returns {String} the list of this database's keywords that are not also SQL:2003 keywords
    */
-  getSQLKeywords(callback) {
-    this.dbm.getSQLKeywords((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getSQLKeywords(): string {
+    return this.dbm.getSQLKeywordsSync();
   }
 
   /**
    * Indicates whether the SQLSTATE returned by SQLException.getSQLState is
    * X/Open (now known as Open Group) SQL CLI or SQL:2003.
    *
-   * @param {Function} callback
-   * @returns {Number} Via callback: the type of SQLSTATE; one of: sqlStateXOpen or sqlStateSQL
+   * @returns {Number} the type of SQLSTATE; one of: sqlStateXOpen or sqlStateSQL
    */
-  getSQLStateType(callback) {
-    this.dbm.getSQLStateType((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getSQLStateType(): number {
+    return this.dbm.getSQLStateTypeSync();
   }
 
   /**
    * Retrieves a comma-separated list of string functions available with this
    * database.
    *
-   * @param {Function} callback
    * @returns {String} Via callback: the list of string functions supported by this database
    */
-  getStringFunctions(callback) {
-    this.dbm.getStringFunctions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getStringFunctions(): string {
+    return this.dbm.getStringFunctionsSync();
   }
 
   /**
@@ -1425,34 +1285,19 @@ export class DatabaseMetaData {
    * @param {String} catalog - A  catalog name; must match the catalog name as it is stored in the database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} tableNamePattern - A table name pattern; must match the table name as it is stored in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: a ResultSet object in which each row is a type description
+   * @returns {Promise<ResultSet>} a ResultSet object in which each row is a type description
    */
-  getSuperTables(catalog, schemaPattern, tableNamePattern, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(tableNamePattern) ||
-        isUndefined(tableNamePattern) ||
-        isString(tableNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getSuperTables(
-      catalog,
-      schemaPattern,
-      tableNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getSuperTables(
+    catalog: string,
+    schemaPattern: string,
+    tableNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getSuperTablesPromise(catalog, schemaPattern, tableNamePattern)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((err) => reject(err));
+    });
   }
 
   /**
@@ -1462,50 +1307,29 @@ export class DatabaseMetaData {
    * @param {String} catalog - A  catalog name; must match the catalog name as it is stored in the database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} typeNamePattern - A UDT name pattern; may be a fully-qualified name
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: a ResultSet object in which a row gives information about the designated UDT
+   * @returns {Promise<ResultSet>} a ResultSet object in which a row gives information about the designated UDT
    */
-  getSuperTypes(catalog, schemaPattern, typeNamePattern, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(typeNamePattern) ||
-        isUndefined(typeNamePattern) ||
-        isString(typeNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getSuperTypes(
-      catalog,
-      schemaPattern,
-      typeNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getSuperTypes(
+    catalog: string,
+    schemaPattern: string,
+    typeNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getSuperTypesPromise(catalog, schemaPattern, typeNamePattern)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((err) => reject(err));
+    });
   }
 
   /**
    * Retrieves a comma-separated list of system functions available with this
    * database.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: a list of system functions supported by this database
+   * @returns {String} a list of system functions supported by this database
    */
-  getSystemFunctions(callback) {
-    this.dbm.getSystemFunctions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getSystemFunctions(): string {
+    return this.dbm.getSystemFunctionsSync();
   }
 
   /**
@@ -1515,48 +1339,32 @@ export class DatabaseMetaData {
    * @param {String} catalog - A  catalog name; must match the catalog name as it is stored in the database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} tableNamePattern - A table name pattern; must match the table name as it is stored in the database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: each row is a table privilege description
+   * @returns {Promise<ResultSet>} each row is a table privilege description
    */
-  getTablePrivileges(catalog, schemaPattern, tableNamePattern, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(tableNamePattern) ||
-        isUndefined(tableNamePattern) ||
-        isString(tableNamePattern));
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getTablePrivileges(
-      catalog,
-      schemaPattern,
-      tableNamePattern,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  async getTablePrivileges(
+    catalog: string,
+    schemaPattern: string,
+    tableNamePattern: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getTablePrivilegesPromise(catalog, schemaPattern, tableNamePattern)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((err) => reject(err));
+    });
   }
 
   /**
    * Retrieves the table types available in this database.
    *
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: a ResultSet object in which each row has a single String column that is a table type
+   * @returns {Promise<ResultSet>} a ResultSet object in which each row has a single String column that is a table type
    */
-  getTableTypes(callback) {
-    this.dbm.getTableTypes((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, new ResultSet(result));
+  async getTableTypes(): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getTableTypesPromise()
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((err) => reject(err));
     });
   }
 
@@ -1564,30 +1372,25 @@ export class DatabaseMetaData {
    * Retrieves a comma-separated list of the time and date functions available
    * with this database.
    *
-   * @param {Function} callback
    * @returns {String} Via callback: the list of time and date functions supported by this database
    */
-  getTimeDateFunctions(callback) {
-    this.dbm.getTimeDateFunctions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getTimeDateFunctions(): string {
+    return this.dbm.getTimeDateFunctionsSync();
   }
 
   /**
    * Retrieves a description of all the data types supported by this database.
    *
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: a ResultSet object in which each row is an SQL type description
+   * @returns {Promise<ResultSet>} a ResultSet object in which each row is an SQL type description
    */
-  getTypeInfo(callback) {
-    this.dbm.getTypeInfo((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, new ResultSet(result));
+  getTypeInfo(): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getTypeInfoPromise()
+        .then((result: IResultSet) => {
+          resolve(new ResultSet(result));
+        })
+        .catch((err) => reject(err));
     });
   }
 
@@ -1599,74 +1402,38 @@ export class DatabaseMetaData {
    * @param {String} schemaPattern - A schema name pattern; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} typeNamePattern - A UDT name pattern; may be a fully-qualified name
    * @param {Number[]} types - A list of user-defined types (JAVA_OBJECT, STRUCT, or DISTINCT) to include; null returns all types
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: ResultSet object in which each row describes a UDT
+   * @returns {Promise<ResultSet>} ResultSet object in which each row describes a UDT
    */
-  getUDTs(catalog, schemaPattern, typeNamePattern, types, callback) {
-    let validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schemaPattern) ||
-        isUndefined(schemaPattern) ||
-        isString(schemaPattern)) &&
-      (isNull(typeNamePattern) ||
-        isUndefined(typeNamePattern) ||
-        isString(typeNamePattern)) &&
-      (isNull(types) || isUndefined(types) || isArray(types));
-
-    if (isArray(types)) {
-      types.forEach((type) => {
-        if (!isInteger(type)) {
-          validParams = false;
-        }
-      });
-    }
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getUDTs(
-      catalog,
-      schemaPattern,
-      typeNamePattern,
-      types,
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, new ResultSet(result));
-      },
-    );
+  getUDTs(
+    catalog: string,
+    schemaPattern: string,
+    typeNamePattern: string,
+    types: number[],
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getUDTsPromise(catalog, schemaPattern, typeNamePattern, types)
+        .then((result: IResultSet) => resolve(new ResultSet(result)))
+        .catch((err) => reject(err));
+    });
   }
 
   /**
    * Retrieves the URL for this DBMS.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: the URL for this DBMS or null if it cannot be generated
+   * @returns {String} the URL for this DBMS or null if it cannot be generated
    */
-  getURL(callback) {
-    this.dbm.getURL((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getURL(): string {
+    return this.dbm.getURLSync();
   }
 
   /**
    * Retrieves the user name as known to this database.
    *
-   * @param {Function} callback
-   * @returns {String} Via callback: Retrieves the user name as known to this database
+   * @returns {String} Retrieves the user name as known to this database
    */
-  getUserName(callback) {
-    this.dbm.getUserName((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  getUserName(): string {
+    return this.dbm.getUserNameSync();
   }
 
   /**
@@ -1676,24 +1443,20 @@ export class DatabaseMetaData {
    * @param {String} catalog - A catalog name; must match the catalog name as it is stored in this database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
    * @param {String} schema - A schema name; must match the schema name as it is stored in the database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
    * @param {String} table - A table name; must match the table name as it is stored in this database
-   * @param {Function} callback
-   * @returns {ResultSet} Via callback: a ResultSet object in which each row is a column description
+   * @returns {Promise<ResultSet>} a ResultSet object in which each row is a column description
    */
-  getVersionColumns(catalog, schema, table, callback) {
-    const validParams =
-      (isNull(catalog) || isUndefined(catalog) || isString(catalog)) &&
-      (isNull(schema) || isUndefined(schema) || isString(schema)) &&
-      isString(table);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.getVersionColumns(catalog, schema, table, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, new ResultSet(result));
+  getVersionColumns(
+    catalog: string,
+    schema: string,
+    table: string,
+  ): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this.dbm
+        .getVersionColumnsPromise(catalog, schema, table)
+        .then((result: IResultSet) => {
+          resolve(new ResultSet(result));
+        })
+        .catch((err) => reject(err));
     });
   }
 
@@ -1702,257 +1465,137 @@ export class DatabaseMetaData {
    * method ResultSet.rowInserted.
    *
    * @param {Number} type - the ResultSet type; one of ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE, or ResultSet.TYPE_SCROLL_SENSITIVE
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if changes are detected by the specified result set type; false otherwise
+   * @returns {Boolean} true if changes are detected by the specified result set type; false otherwise
    */
-  insertsAreDetected(type, callback) {
-    const validParams = isInteger(type);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.insertsAreDetected(type, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  insertsAreDetected(type: number): boolean {
+    return this.dbm.insertsAreDetectedSync(type);
   }
 
   /**
    * Retrieves whether a catalog appears at the start of a fully qualified table
    * name.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  isCatalogAtStart(callback) {
-    this.dbm.isCatalogAtStart((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  isCatalogAtStart(): boolean {
+    return this.dbm.isCatalogAtStartSync();
   }
 
   /**
    * Retrieves whether this database is in read-only mode.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  isReadOnly(callback) {
-    this.dbm.isReadOnly((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  isReadOnly(): boolean {
+    return this.dbm.isReadOnlySync();
   }
 
   /**
    * Indicates whether updates made to a LOB are made on a copy or directly to
    * the LOB.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if updates are made to a copy of the LOB; false if updates are made directly to the LOB
+   * @returns {Boolean} true if updates are made to a copy of the LOB; false if updates are made directly to the LOB
    */
-  locatorsUpdateCopy(callback) {
-    this.dbm.locatorsUpdateCopy((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  locatorsUpdateCopy(): boolean {
+    return this.dbm.locatorsUpdateCopySync();
   }
 
   /**
    * Retrieves whether this database supports concatenations between NULL and
    * non-NULL values being NULL.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  nullPlusNonNullIsNull(callback) {
-    this.dbm.nullPlusNonNullIsNull((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  nullPlusNonNullIsNull(): boolean {
+    return this.dbm.nullPlusNonNullIsNullSync();
   }
 
   /**
    * Retrieves whether NULL values are sorted at the end regardless of sort
    * order.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  nullsAreSortedAtEnd(callback) {
-    this.dbm.nullsAreSortedAtEnd((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  nullsAreSortedAtEnd(): boolean {
+    return this.dbm.nullsAreSortedAtEndSync();
   }
 
   /**
    * Retrieves whether NULL values are sorted at the start regardless of sort
    * order.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  nullsAreSortedAtStart(callback) {
-    this.dbm.nullsAreSortedAtStart((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  nullsAreSortedAtStart(): boolean {
+    return this.dbm.nullsAreSortedAtStartSync();
   }
 
   /**
    * Retrieves whether NULL values are sorted high.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  nullsAreSortedHigh(callback) {
-    this.dbm.nullsAreSortedHigh((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  nullsAreSortedHigh(): boolean {
+    return this.dbm.nullsAreSortedHighSync();
   }
 
   /**
    * Retrieves whether NULL values are sorted low.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean}  true if so; false otherwise
    */
-  nullsAreSortedLow(callback) {
-    this.dbm.nullsAreSortedLow((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  nullsAreSortedLow(): boolean {
+    return this.dbm.nullsAreSortedLowSync();
   }
 
   /**
    * Retrieves whether deletes made by others are visible.
    *
    * @param {Number} type - the ResultSet type; one of ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE, or ResultSet.TYPE_SCROLL_SENSITIVE
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if deletes made by others are visible for the given result set type; false otherwise
+   * @returns {Boolean} true if deletes made by others are visible for the given result set type; false otherwise
    */
-  othersDeletesAreVisible(type, callback) {
-    const validParams = isInteger(type);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.othersDeletesAreVisible(type, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  othersDeletesAreVisible(type: number): boolean {
+    return this.dbm.othersDeletesAreVisibleSync(type);
   }
 
   /**
    * Retrieves whether inserts made by others are visible.
    *
    * @param {Number} type - the ResultSet type; one of ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE, or ResultSet.TYPE_SCROLL_SENSITIVE
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if inserts made by others are visible for the given result set type; false otherwise
+   * @returns {Boolean} true if inserts made by others are visible for the given result set type; false otherwise
    */
-  othersInsertsAreVisible(type, callback) {
-    const validParams = isInteger(type);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.othersInsertsAreVisible(type, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  othersInsertsAreVisible(type: number): boolean {
+    return this.dbm.othersInsertsAreVisibleSync(type);
   }
 
   /**
    * Retrieves whether updates made by others are visible.
    *
    * @param {Number} type - the ResultSet type; one of ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE, or ResultSet.TYPE_SCROLL_SENSITIVE
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if updates made by others are visible for the given result set type; false otherwise
+   * @returns {Boolean} true if updates made by others are visible for the given result set type; false otherwise
    */
-  othersUpdatesAreVisible(type, callback) {
-    const validParams = isInteger(type);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.othersUpdatesAreVisible(type, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  othersUpdatesAreVisible(type: number): boolean {
+    return this.dbm.othersUpdatesAreVisibleSync(type);
   }
 
   /**
    * Retrieves whether a result set's own deletes are visible.
    *
    * @param {Number} type - the ResultSet type; one of ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE, or ResultSet.TYPE_SCROLL_SENSITIVE
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if deletes are visible for the given result set type; false otherwise
+   * @returns {Boolean} true if deletes are visible for the given result set type; false otherwise
    */
-  ownDeletesAreVisible(type, callback) {
-    const validParams = isInteger(type);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.ownDeletesAreVisible(type, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  ownDeletesAreVisible(type: number): boolean {
+    return this.dbm.ownDeletesAreVisibleSync(type);
   }
 
   /**
    * Retrieves whether a result set's own inserts are visible.
    *
    * @param {Number} type - the ResultSet type; one of ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE, or ResultSet.TYPE_SCROLL_SENSITIVE
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if inserts are visible for the given result set type; false otherwise
+   * @returns {Boolean} true if inserts are visible for the given result set type; false otherwise
    */
-  ownInsertsAreVisible(type, callback) {
-    const validParams = isInteger(type);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.ownInsertsAreVisible(type, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  ownInsertsAreVisible(type: number): boolean {
+    return this.dbm.ownInsertsAreVisibleSync(type);
   }
 
   /**
@@ -1960,304 +1603,184 @@ export class DatabaseMetaData {
    * own updates are visible.
    *
    * @param {Number} type - the ResultSet type; one of ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE, or ResultSet.TYPE_SCROLL_SENSITIVE
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if updates are visible for the given result set type; false otherwise
+   * @returns {Boolean} true if updates are visible for the given result set type; false otherwise
    */
-  ownUpdatesAreVisible(type, callback) {
-    const validParams = isInteger(type);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.ownUpdatesAreVisible(type, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  ownUpdatesAreVisible(type: number): boolean {
+    return this.dbm.ownUpdatesAreVisibleSync(type);
   }
 
   /**
    * Retrieves whether this database treats mixed case unquoted SQL identifiers
    * as case insensitive and stores them in lower case.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  storesLowerCaseIdentifiers(callback) {
-    this.dbm.storesLowerCaseIdentifiers((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  storesLowerCaseIdentifiers(): boolean {
+    return this.dbm.storesLowerCaseIdentifiersSync();
   }
 
   /**
    * Retrieves whether this database treats mixed case quoted SQL identifiers as
    * case insensitive and stores them in lower case.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  storesLowerCaseQuotedIdentifiers(callback) {
-    this.dbm.storesLowerCaseQuotedIdentifiers((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  storesLowerCaseQuotedIdentifiers(): boolean {
+    return this.dbm.storesLowerCaseQuotedIdentifiersSync();
   }
 
   /**
    * Retrieves whether this database treats mixed case unquoted SQL identifiers
    * as case insensitive and stores them in mixed case.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  storesMixedCaseIdentifiers(callback) {
-    this.dbm.storesMixedCaseIdentifiers((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  storesMixedCaseIdentifiers(): boolean {
+    return this.dbm.storesMixedCaseIdentifiersSync();
   }
 
   /**
    * Retrieves whether this database treats mixed case quoted SQL identifiers as
    * case insensitive and stores them in mixed case.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  storesMixedCaseQuotedIdentifiers(callback) {
-    this.dbm.storesMixedCaseQuotedIdentifiers((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  storesMixedCaseQuotedIdentifiers(): boolean {
+    return this.dbm.storesMixedCaseQuotedIdentifiersSync();
   }
 
   /**
    * Retrieves whether this database treats mixed case unquoted SQL identifiers
    * as case insensitive and stores them in upper case.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  storesUpperCaseIdentifiers(callback) {
-    this.dbm.storesUpperCaseIdentifiers((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  storesUpperCaseIdentifiers(): boolean {
+    return this.dbm.storesUpperCaseIdentifiersSync();
   }
 
   /**
    * Retrieves whether this database treats mixed case quoted SQL identifiers as
    * case insensitive and stores them in upper case.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  storesUpperCaseQuotedIdentifiers(callback) {
-    this.dbm.storesUpperCaseQuotedIdentifiers((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  storesUpperCaseQuotedIdentifiers(): boolean {
+    return this.dbm.storesUpperCaseQuotedIdentifiersSync();
   }
 
   /**
    * Retrieves whether this database supports ALTER TABLE with add column.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsAlterTableWithAddColumn(callback) {
-    this.dbm.supportsAlterTableWithAddColumn((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsAlterTableWithAddColumn(): boolean {
+    return this.dbm.supportsAlterTableWithAddColumnSync();
   }
 
   /**
    * Retrieves whether this database supports ALTER TABLE with drop column.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsAlterTableWithDropColumn(callback) {
-    this.dbm.supportsAlterTableWithDropColumn((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsAlterTableWithDropColumn(): boolean {
+    return this.dbm.supportsAlterTableWithDropColumnSync();
   }
 
   /**
    * Retrieves whether this database supports the ANSI92 entry level SQL grammar.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsANSI92EntryLevelSQL(callback) {
-    this.dbm.supportsANSI92EntryLevelSQL((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsANSI92EntryLevelSQL(): boolean {
+    return this.dbm.supportsANSI92EntryLevelSQLSync();
   }
 
   /**
    * Retrieves whether this database supports the ANSI92 full SQL grammar
    * supported.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsANSI92FullSQL(callback) {
-    this.dbm.supportsANSI92FullSQL((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsANSI92FullSQL(): boolean {
+    return this.dbm.supportsANSI92FullSQLSync();
   }
 
   /**
    * Retrieves whether this database supports the ANSI92 intermediate SQL grammar
    * supported.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsANSI92IntermediateSQL(callback) {
-    this.dbm.supportsANSI92IntermediateSQL((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsANSI92IntermediateSQL(): boolean {
+    return this.dbm.supportsANSI92IntermediateSQLSync();
   }
 
   /**
    * Retrieves whether this database supports batch updates.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if this database supports batch upcates; false otherwise
+   * @returns {Boolean} true if this database supports batch upcates; false otherwise
    */
-  supportsBatchUpdates(callback) {
-    this.dbm.supportsBatchUpdates((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsBatchUpdates(): boolean {
+    return this.dbm.supportsBatchUpdatesSync();
   }
 
   /**
    * Retrieves whether a catalog name can be used in a data manipulation
    * statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsCatalogsInDataManipulation(callback) {
-    this.dbm.supportsCatalogsInDataManipulation((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsCatalogsInDataManipulation(): boolean {
+    return this.dbm.supportsCatalogsInDataManipulationSync();
   }
 
   /**
    * Retrieves whether a catalog name can be used in an index definition
    * statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsCatalogsInIndexDefinitions(callback) {
-    this.dbm.supportsCatalogsInIndexDefinitions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsCatalogsInIndexDefinitions(): boolean {
+    return this.dbm.supportsCatalogsInIndexDefinitionsSync();
   }
 
   /**
    * Retrieves whether a catalog name can be used in a privilege definition
    * statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsCatalogsInPrivilegeDefinitions(callback) {
-    this.dbm.supportsCatalogsInPrivilegeDefinitions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsCatalogsInPrivilegeDefinitions(): boolean {
+    return this.dbm.supportsCatalogsInPrivilegeDefinitionsSync();
   }
 
   /**
    * Retrieves whether a catalog name can be used in a procedure call statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsCatalogsInProcedureCalls(callback) {
-    this.dbm.supportsCatalogsInProcedureCalls((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsCatalogsInProcedureCalls(): boolean {
+    return this.dbm.supportsCatalogsInProcedureCallsSync();
   }
 
   /**
    * Retrieves whether a catalog name can be used in a table definition
    * statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsCatalogsInTableDefinitions(callback) {
-    this.dbm.supportsCatalogsInTableDefinitions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsCatalogsInTableDefinitions(): boolean {
+    return this.dbm.supportsCatalogsInTableDefinitionsSync();
   }
 
   /**
    * Retrieves whether this database supports column aliasing.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsColumnAliasing(callback) {
-    this.dbm.supportsColumnAliasing((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsColumnAliasing(): boolean {
+    return this.dbm.supportsColumnAliasingSync();
   }
 
   /**
@@ -2267,178 +1790,104 @@ export class DatabaseMetaData {
    *
    * @param {Number} [fromType] - The type to convert from; one of the type codes from the class java.sql.Types
    * @param {Number} [toType] - The type to convert to; one of the type codes from the class java.sql.Types
-   * @param {Function} callback
    * @returns {Boolean}  Via callback: true if so; false otherwise
    */
-  supportsConvert(fromType, toType, callback) {
-    const validParams = isInteger(fromType) && isInteger(toType);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.supportsConvert(fromType, toType, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsConvert(fromType: number, toType: number): boolean {
+    return this.dbm.supportsConvertSync(fromType, toType);
   }
 
   /**
    * Retrieves whether this database supports the ODBC Core SQL grammar.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsCoreSQLGrammar(callback) {
-    this.dbm.supportsCoreSQLGrammar((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsCoreSQLGrammar(): boolean {
+    return this.dbm.supportsCoreSQLGrammarSync();
   }
 
   /**
    * Retrieves whether this database supports correlated subqueries.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsCorrelatedSubqueries(callback) {
-    this.dbm.supportsCorrelatedSubqueries((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsCorrelatedSubqueries(): boolean {
+    return this.dbm.supportsCorrelatedSubqueriesSync();
   }
 
   /**
    * Retrieves whether this database supports both data definition and data
    * manipulation statements within a transaction.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsDataDefinitionAndDataManipulationTransactions(callback) {
-    this.dbm.supportsDataDefinitionAndDataManipulationTransactions(
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, result);
-      },
-    );
+  supportsDataDefinitionAndDataManipulationTransactions(): boolean {
+    return this.dbm.supportsDataDefinitionAndDataManipulationTransactionsSync();
   }
 
   /**
    * Retrieves whether this database supports only data manipulation statements
    * within a transaction.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsDataManipulationTransactionsOnly(callback) {
-    this.dbm.supportsDataManipulationTransactionsOnly((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsDataManipulationTransactionsOnly(): boolean {
+    return this.dbm.supportsDataManipulationTransactionsOnlySync();
   }
 
   /**
    * Retrieves whether, when table correlation names are supported, they are
    * restricted to being different from the names of the tables.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsDifferentTableCorrelationNames(callback) {
-    this.dbm.supportsDifferentTableCorrelationNames((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsDifferentTableCorrelationNames(): boolean {
+    return this.dbm.supportsDifferentTableCorrelationNamesSync();
   }
 
   /**
    * Retrieves whether this database supports expressions in ORDER BY lists.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsExpressionsInOrderBy(callback) {
-    this.dbm.supportsExpressionsInOrderBy((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsExpressionsInOrderBy(): boolean {
+    return this.dbm.supportsExpressionsInOrderBySync();
   }
 
   /**
    * Retrieves whether this database supports the ODBC Extended SQL grammar.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsExtendedSQLGrammar(callback) {
-    this.dbm.supportsExtendedSQLGrammar((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsExtendedSQLGrammar(): boolean {
+    return this.dbm.supportsExtendedSQLGrammarSync();
   }
 
   /**
    * Retrieves whether this database supports full nested outer joins.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsFullOuterJoins(callback) {
-    this.dbm.supportsFullOuterJoins((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsFullOuterJoins(): boolean {
+    return this.dbm.supportsFullOuterJoinsSync();
   }
 
   /**
    * Retrieves whether auto-generated keys can be retrieved after a statement has
    * been executed
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsGetGeneratedKeys(callback) {
-    this.dbm.supportsGetGeneratedKeys((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsGetGeneratedKeys(): boolean {
+    return this.dbm.supportsGetGeneratedKeysSync();
   }
 
   /**
    * Retrieves whether this database supports some form of GROUP BY clause.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsGroupBy(callback) {
-    this.dbm.supportsGroupBy((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsGroupBy(): boolean {
+    return this.dbm.supportsGroupBySync();
   }
 
   /**
@@ -2446,329 +1895,203 @@ export class DatabaseMetaData {
    * SELECT statement in a GROUP BY clause provided that all of the columns in
    * the SELECT statement are included in the GROUP BY clause.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsGroupByBeyondSelect(callback) {
-    this.dbm.supportsGroupByBeyondSelect((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsGroupByBeyondSelect(): boolean {
+    return this.dbm.supportsGroupByBeyondSelectSync();
   }
 
   /**
    * Retrieves whether this database supports using a column that is not in the
    * SELECT statement in a GROUP BY clause.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsGroupByUnrelated(callback) {
-    this.dbm.supportsGroupByUnrelated((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsGroupByUnrelated(): boolean {
+    return this.dbm.supportsGroupByUnrelatedSync();
   }
 
   /**
    * Retrieves whether this database supports the SQL Integrity Enhancement
    * Facility.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsIntegrityEnhancementFacility(callback) {
-    this.dbm.supportsIntegrityEnhancementFacility((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsIntegrityEnhancementFacility(): boolean {
+    return this.dbm.supportsIntegrityEnhancementFacilitySync();
   }
 
   /**
    * Retrieves whether this database supports specifying a LIKE escape clause.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsLikeEscapeClause(callback) {
-    this.dbm.supportsLikeEscapeClause((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsLikeEscapeClause(): boolean {
+    return this.dbm.supportsLikeEscapeClauseSync();
   }
 
   /**
    * Retrieves whether this database provides limited support for outer joins.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsLimitedOuterJoins(callback) {
-    this.dbm.supportsLimitedOuterJoins((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsLimitedOuterJoins(): boolean {
+    return this.dbm.supportsLimitedOuterJoinsSync();
   }
 
   /**
    * Retrieves whether this database supports the ODBC Minimum SQL grammar.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsMinimumSQLGrammar(callback) {
-    this.dbm.supportsMinimumSQLGrammar((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsMinimumSQLGrammar(): boolean {
+    return this.dbm.supportsMinimumSQLGrammarSync();
   }
 
   /**
    * Retrieves whether this database treats mixed case unquoted SQL identifiers
    * as case sensitive and as a result stores them in mixed case.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsMixedCaseIdentifiers(callback) {
-    this.dbm.supportsMixedCaseIdentifiers((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsMixedCaseIdentifiers(): boolean {
+    return this.dbm.supportsMixedCaseIdentifiersSync();
   }
 
   /**
    * Retrieves whether this database treats mixed case quoted SQL identifiers as
    * case sensitive and as a result stores them in mixed case.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsMixedCaseQuotedIdentifiers(callback) {
-    this.dbm.supportsMixedCaseQuotedIdentifiers((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsMixedCaseQuotedIdentifiers(): boolean {
+    return this.dbm.supportsMixedCaseQuotedIdentifiersSync();
   }
 
   /**
    * Retrieves whether it is possible to have multiple ResultSet objects returned
    * from a CallableStatement object simultaneously.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsMultipleOpenResults(callback) {
-    this.dbm.supportsMultipleOpenResults((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsMultipleOpenResults(): boolean {
+    return this.dbm.supportsMultipleOpenResultsSync();
   }
 
   /**
    * Retrieves whether this database supports getting multiple ResultSet objects
    * from a single call to the method execute.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsMultipleResultSets(callback) {
-    this.dbm.supportsMultipleResultSets((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsMultipleResultSets(): boolean {
+    return this.dbm.supportsMultipleResultSetsSync();
   }
 
   /**
    * Retrieves whether this database allows having multiple transactions open at
    * once (on different connections).
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsMultipleTransactions(callback) {
-    this.dbm.supportsMultipleTransactions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsMultipleTransactions(): boolean {
+    return this.dbm.supportsMultipleTransactionsSync();
   }
 
   /**
    * Retrieves whether this database supports named parameters to callable
    * statements.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsNamedParameters(callback) {
-    this.dbm.supportsNamedParameters((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsNamedParameters(): boolean {
+    return this.dbm.supportsNamedParametersSync();
   }
 
   /**
    * Retrieves whether columns in this database may be defined as non-nullable.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsNonNullableColumns(callback) {
-    this.dbm.supportsNonNullableColumns((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsNonNullableColumns(): boolean {
+    return this.dbm.supportsNonNullableColumnsSync();
   }
 
   /**
    * Retrieves whether this database supports keeping cursors open across
    * commits.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsOpenCursorsAcrossCommit(callback) {
-    this.dbm.supportsOpenCursorsAcrossCommit((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsOpenCursorsAcrossCommit(): boolean {
+    return this.dbm.supportsOpenCursorsAcrossCommitSync();
   }
 
   /**
    * Retrieves whether this database supports keeping cursors open across
    * rollbacks.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsOpenCursorsAcrossRollback(callback) {
-    this.dbm.supportsOpenCursorsAcrossRollback((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsOpenCursorsAcrossRollback(): boolean {
+    return this.dbm.supportsOpenCursorsAcrossRollbackSync();
   }
 
   /**
    * Retrieves whether this database supports keeping statements open across
    * commits.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsOpenStatementsAcrossCommit(callback) {
-    this.dbm.supportsOpenStatementsAcrossCommit((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsOpenStatementsAcrossCommit(): boolean {
+    return this.dbm.supportsOpenStatementsAcrossCommitSync();
   }
 
   /**
    * Retrieves whether this database supports keeping statements open across
    * rollbacks.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsOpenStatementsAcrossRollback(callback) {
-    this.dbm.supportsOpenStatementsAcrossRollback((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsOpenStatementsAcrossRollback(): boolean {
+    return this.dbm.supportsOpenStatementsAcrossRollbackSync();
   }
 
   /**
    * Retrieves whether this database supports using a column that is not in the
    * SELECT statement in an ORDER BY clause.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsOrderByUnrelated(callback) {
-    this.dbm.supportsOrderByUnrelated((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsOrderByUnrelated(): boolean {
+    return this.dbm.supportsOrderByUnrelatedSync();
   }
 
   /**
    * Retrieves whether this database supports some form of outer join.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsOuterJoins(callback) {
-    this.dbm.supportsOuterJoins((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsOuterJoins(): boolean {
+    return this.dbm.supportsOuterJoinsSync();
   }
 
   /**
    * Retrieves whether this database supports positioned DELETE statements.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsPositionedDelete(callback) {
-    this.dbm.supportsPositionedDelete((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsPositionedDelete() {
+    return this.dbm.supportsPositionedDeleteSync();
   }
 
   /**
    * Retrieves whether this database supports positioned UPDATE statements.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsPositionedUpdate(callback) {
-    this.dbm.supportsPositionedUpdate((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsPositionedUpdate() {
+    this.dbm.supportsPositionedUpdateSync();
   }
 
   /**
@@ -2777,298 +2100,172 @@ export class DatabaseMetaData {
    *
    * @param {Number} type - Defined in java.sql.ResultSet
    * @param {Number} concurrency - Type defined in java.sql.ResultSet
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsResultSetConcurrency(type, concurrency, callback) {
-    const validParams = isInteger(type) && isInteger(concurrency);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.supportsResultSetConcurrency(type, concurrency, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsResultSetConcurrency(type: number, concurrency: number): boolean {
+    return this.dbm.supportsResultSetConcurrencySync(type, concurrency);
   }
 
   /**
    * Retrieves whether this database supports the given result set holdability.
    *
    * @param {Number} holdability - one of the following constants: ResultSet.HOLD_CURSORS_OVER_COMMIT or ResultSet.CLOSE_CURSORS_AT_COMMIT
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so, false otherwise
+   * @returns {Boolean} true if so, false otherwise
    */
-  supportsResultSetHoldability(holdability, callback) {
-    const validParams = isInteger(holdability);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.supportsResultSetHoldability(holdability, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsResultSetHoldability(holdability: number): boolean {
+    return this.dbm.supportsResultSetHoldabilitySync(holdability);
   }
 
   /**
    * Retrieves whether this database supports the given result set type.
    *
    * @param {Number} type - defined in java.sql.ResultSet
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so, false otherwise
+   * @returns {Boolean} true if so, false otherwise
    */
-  supportsResultSetType(type, callback) {
-    const validParams = isInteger(type);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.supportsResultSetType(type, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsResultSetType(type: number): boolean {
+    return this.dbm.supportsResultSetTypeSync(type);
   }
 
   /**
    * Retrieves whether this database supports savepoints.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSavepoints(callback) {
-    this.dbm.supportsSavepoints((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSavepoints(): boolean {
+    return this.dbm.supportsSavepointsSync();
   }
 
   /**
    * Retrieves whether a schema name can be used in a data manipulation
    * statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSchemasInDataManipulation(callback) {
-    this.dbm.supportsSchemasInDataManipulation((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSchemasInDataManipulation(): boolean {
+    return this.dbm.supportsSchemasInDataManipulationSync();
   }
 
   /**
    * Retrieves whether a schema name can be used in an index definition
    * statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSchemasInIndexDefinitions(callback) {
-    this.dbm.supportsSchemasInIndexDefinitions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSchemasInIndexDefinitions(): boolean {
+    return this.dbm.supportsSchemasInIndexDefinitionsSync();
   }
 
   /**
    * Retrieves whether a schema name can be used in a privilege definition
    * statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSchemasInPrivilegeDefinitions(callback) {
-    this.dbm.supportsSchemasInPrivilegeDefinitions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSchemasInPrivilegeDefinitions(): boolean {
+    return this.dbm.supportsSchemasInPrivilegeDefinitionsSync();
   }
 
   /**
    * Retrieves whether a schema name can be used in a procedure call statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSchemasInProcedureCalls(callback) {
-    this.dbm.supportsSchemasInProcedureCalls((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSchemasInProcedureCalls(): boolean {
+    return this.dbm.supportsSchemasInProcedureCallsSync();
   }
 
   /**
    * Retrieves whether a schema name can be used in a table definition statement.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSchemasInTableDefinitions(callback) {
-    this.dbm.supportsSchemasInTableDefinitions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSchemasInTableDefinitions(): boolean {
+    return this.dbm.supportsSchemasInTableDefinitionsSync();
   }
 
   /**
    * Retrieves whether this database supports SELECT FOR UPDATE statements.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSelectForUpdate(callback) {
-    this.dbm.supportsSelectForUpdate((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSelectForUpdate(): boolean {
+    return this.dbm.supportsSelectForUpdateSync();
   }
 
   /**
    * Retrieves whether this database supports statement pooling.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsStatementPooling(callback) {
-    this.dbm.supportsStatementPooling((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsStatementPooling(): boolean {
+    return this.dbm.supportsStatementPoolingSync();
   }
 
   /**
    * Retrieves whether this database supports invoking user-defined or vendor
    * functions using the stored procedure escape syntax.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsStoredFunctionsUsingCallSyntax(callback) {
-    this.dbm.supportsStoredFunctionsUsingCallSyntax((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsStoredFunctionsUsingCallSyntax(): boolean {
+    return this.dbm.supportsStoredFunctionsUsingCallSyntaxSync();
   }
 
   /**
    * Retrieves whether this database supports stored procedure calls that use the
    * stored procedure escape syntax.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsStoredProcedures(callback) {
-    this.dbm.supportsStoredProcedures((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsStoredProcedures(): boolean {
+    return this.dbm.supportsStoredProceduresSync();
   }
 
   /**
    * Retrieves whether this database supports subqueries in comparison
    * expressions.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSubqueriesInComparisons(callback) {
-    this.dbm.supportsSubqueriesInComparisons((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSubqueriesInComparisons(): boolean {
+    return this.dbm.supportsSubqueriesInComparisonsSync();
   }
 
   /**
    * Retrieves whether this database supports subqueries in EXISTS expressions.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSubqueriesInExists(callback) {
-    this.dbm.supportsSubqueriesInExists((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSubqueriesInExists(): boolean {
+    return this.dbm.supportsSubqueriesInExistsSync();
   }
 
   /**
    * Retrieves whether this database supports subqueries in IN expressions.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSubqueriesInIns(callback) {
-    this.dbm.supportsSubqueriesInIns((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSubqueriesInIns(): boolean {
+    return this.dbm.supportsSubqueriesInInsSync();
   }
 
   /**
    * Retrieves whether this database supports subqueries in quantified
    * expressions.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsSubqueriesInQuantifieds(callback) {
-    this.dbm.supportsSubqueriesInQuantifieds((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsSubqueriesInQuantifieds(): boolean {
+    return this.dbm.supportsSubqueriesInQuantifiedsSync();
   }
 
   /**
    * Retrieves whether this database supports table correlation names.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsTableCorrelationNames(callback) {
-    this.dbm.supportsTableCorrelationNames((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsTableCorrelationNames(): boolean {
+    return this.dbm.supportsTableCorrelationNamesSync();
   }
 
   /**
@@ -3076,67 +2273,37 @@ export class DatabaseMetaData {
    * level.
    *
    * @param {Number} level - one of the transaction isolation levels defined in java.sql.Connection
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so, false otherwise
+   * @returns {Boolean} true if so, false otherwise
    */
-  supportsTransactionIsolationLevel(level, callback) {
-    const validParams = isInteger(level);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.supportsTransactionIsolationLevel(level, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsTransactionIsolationLevel(level: number): boolean {
+    return this.dbm.supportsTransactionIsolationLevelSync(level);
   }
 
   /**
    * Retrieves whether this database supports transactions.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsTransactions(callback) {
-    this.dbm.supportsTransactions((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsTransactions(): boolean {
+    return this.dbm.supportsTransactionsSync();
   }
 
   /**
    * Retrieves whether this database supports SQL UNION.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsUnion(callback) {
-    this.dbm.supportsUnion((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsUnion(): boolean {
+    return this.dbm.supportsUnionSync();
   }
 
   /**
    * Retrieves whether this database supports SQL UNION ALL.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  supportsUnionAll(callback) {
-    this.dbm.supportsUnionAll((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  supportsUnionAll(): boolean {
+    return this.dbm.supportsUnionAllSync();
   }
 
   /**
@@ -3144,52 +2311,28 @@ export class DatabaseMetaData {
    * method ResultSet.rowUpdated.
    *
    * @param {Number} type - the ResultSet type; one of ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE, or ResultSet.TYPE_SCROLL_SENSITIVE
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if changes are detected by the result set type; false otherwise
+   * @returns {Boolean} true if changes are detected by the result set type; false otherwise
    */
-  updatesAreDetected(type, callback) {
-    const validParams = isInteger(type);
-
-    if (!validParams) {
-      return callback(new Error('INVALID ARGUMENTS'));
-    }
-
-    this.dbm.updatesAreDetected(type, (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  updatesAreDetected(type: number): boolean {
+    return this.dbm.updatesAreDetectedSync(type);
   }
 
   /**
    * Retrieves whether this database uses a file for each table.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  usesLocalFilePerTable(callback) {
-    this.dbm.usesLocalFilePerTable((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  usesLocalFilePerTable(): boolean {
+    return this.dbm.usesLocalFilePerTableSync();
   }
 
   /**
    * Retrieves whether this database stores tables in a local file.
    *
-   * @param {Function} callback
-   * @returns {Boolean} Via callback: true if so; false otherwise
+   * @returns {Boolean} true if so; false otherwise
    */
-  usesLocalFiles(callback) {
-    this.dbm.usesLocalFiles((err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, result);
-    });
+  usesLocalFiles(): boolean {
+    return this.dbm.usesLocalFilesSync();
   }
 }
 
