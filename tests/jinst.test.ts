@@ -87,6 +87,17 @@ describe('jinst', () => {
     expect(result[0].id).toBe(1);
   });
 
+  it('should be able to use execute', async () => {
+    const { conn } = connobj;
+    expect(conn).toBeDefined();
+
+    statement = await conn.createStatement();
+    expect(statement).toBeDefined();
+
+    const rs = await statement.execute('select id from test where id = 1');
+    expect(rs).toBe(true);
+  });
+
   it('should be able to update a value', async () => {
     const { conn } = connobj;
     expect(conn).toBeDefined();

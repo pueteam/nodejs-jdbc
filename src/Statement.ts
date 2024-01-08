@@ -25,7 +25,7 @@ export interface IStatement {
   executeBatchPromise(): Promise<number[]>;
   executeUpdatePromise(sql: string): Promise<number>;
   executeQueryPromise(sql: string): Promise<IResultSet>;
-  execute(sql: string): Promise<number | IResultSet>;
+  executePromise(sql: string): Promise<boolean>;
   addBatchPromise(sql: string): Promise<void>;
   clearBatchPromise(): Promise<void>;
   cancelPromise(): Promise<void>;
@@ -107,12 +107,12 @@ export class Statement {
     });
   }
 
-  async execute(sql: string): Promise<number | ResultSet> {
+  async execute(sql: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.s
-        .execute(sql)
-        .then((result: IResultSet) => {
-          resolve(new ResultSet(result));
+        .executePromise(sql)
+        .then((result: boolean) => {
+          resolve(result);
         })
         .catch((error) => {
           reject(error);

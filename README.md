@@ -14,6 +14,9 @@ to follow a more modern way of doing things.
 
 ## Latests Versions
 
+- 0.1.1
+Fixes keepalive
+
 - 0.1.0
 Finished DataBaseMetadata wrapping migration
 
@@ -127,7 +130,7 @@ resultset object.
 // Execute the query and get the ResultSet
 const sql = 'select 1';
 const rs = await statement.executeQuery(sql);
-const results = await rs.toObjArray();
+const results = rs.toObjArray();
 ```
 
 - **Oracle and Closing Statements**

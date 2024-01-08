@@ -121,11 +121,11 @@ export class Pool {
             logger.silly('%s - Keep-Alive', new Date().toUTCString());
           })
           .catch((err) => {
-            logger.error(err);
+            logger.error('Error executing query' + err);
           });
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error('Error creating statement' + error);
       });
   }
 
@@ -138,14 +138,15 @@ export class Pool {
           this.config.user,
           this.config.password,
         ).getConnectionDS();
+        const c = new Connection(conn);
         const connobj = {
           uuid: uuidv4(),
-          conn: new Connection(conn),
+          conn: c,
           keepalive: this.config.keepalive.enabled
             ? setInterval(
                 this.keepaliveConnection,
                 this.config.keepalive.interval,
-                conn,
+                c,
                 this.config.keepalive.query,
               )
             : false,
@@ -155,14 +156,15 @@ export class Pool {
         return resolve(connobj);
       }
       const conn = getConnection(this.config.url, this.config.props);
+      const c = new Connection(conn);
       const connobj = {
         uuid: uuidv4(),
-        conn: new Connection(conn),
+        conn: c,
         keepalive: this.config.keepalive.enabled
           ? setInterval(
               this.keepaliveConnection,
               this.config.keepalive.interval,
-              conn,
+              c,
               this.config.keepalive.query,
             )
           : false,
@@ -182,14 +184,15 @@ export class Pool {
           this.config.password,
         ).getConnectionDS()
       : getConnectionSync(this.config.url, this.config.props);
+    const c = new Connection(conn);
     const connobj = {
       uuid: uuidv4(),
-      conn: new Connection(conn),
+      conn: c,
       keepalive: this.config.keepalive.enabled
         ? setInterval(
             this.keepaliveConnection,
             this.config.keepalive.interval,
-            conn,
+            c,
             this.config.keepalive.query,
           )
         : false,
