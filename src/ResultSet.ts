@@ -38,8 +38,7 @@ export class ResultSet {
   next() {
     return this.resultSet.nextSync();
   }
-  fetchResult(): IFetchResult {
-    const metas: IColumnMetaData[] = this.getMetaData().getAllColumnMeta();
+  fetchResult(metas: IColumnMetaData[]): IFetchResult {
     const result: IFetchResult = {};
 
     for (const meta of metas) {
@@ -72,9 +71,10 @@ export class ResultSet {
   }
 
   toObjArray(): IFetchResult[] {
+    const metas: IColumnMetaData[] = this.getMetaData().getAllColumnMeta();
     const results: IFetchResult[] = [];
     while (this.next()) {
-      results.push(this.fetchResult());
+      results.push(this.fetchResult(metas));
     }
     return results;
   }

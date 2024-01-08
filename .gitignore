@@ -38,4 +38,5 @@ bun.lockb
 .nvmrc
 tests/impaladm.test.ts
 tests/impalads.test.ts
+tests/impalabenchmark.test.ts
 drivers/ImpalaJDBC42.jar

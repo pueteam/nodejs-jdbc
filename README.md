@@ -14,6 +14,9 @@ to follow a more modern way of doing things.
 
 ## Latests Versions
 
+- 0.1.2
+Improves performance for large ResultSets
+
 - 0.1.1
 Fixes keepalive
 
