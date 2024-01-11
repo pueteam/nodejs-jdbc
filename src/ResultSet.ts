@@ -42,6 +42,7 @@ export class ResultSet {
     const result: IFetchResult = {};
 
     for (const meta of metas) {
+      if (meta.type.name === 'BigDecimal') meta.type.name = 'Double';
       const getterName = 'get' + meta.type.name + 'Sync';
       if (typeof this.resultSet[getterName] !== 'function') {
         throw new Error(

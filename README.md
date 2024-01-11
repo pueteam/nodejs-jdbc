@@ -14,6 +14,9 @@ to follow a more modern way of doing things.
 
 ## Latests Versions
 
+- 0.1.3
+Fixed BigDecimal to Double
+
 - 0.1.2
 Improves performance for large ResultSets
 
