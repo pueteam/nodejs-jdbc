@@ -14,6 +14,9 @@ to follow a more modern way of doing things.
 
 ## Latests Versions
 
+- 0.1.4
+Fixed Date, Time and Timestamp results
+
 - 0.1.3
 Fixed BigDecimal to Double
 

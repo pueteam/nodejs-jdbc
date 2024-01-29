@@ -55,7 +55,7 @@ export class ResultSet {
           meta.type.name === 'Time' ||
           meta.type.name === 'Timestamp': {
           const dateValue = this.resultSet[`${getterName}`](meta.label);
-          result[meta.label] = dateValue ? dateValue.toString() : null;
+          result[meta.label] = dateValue ? dateValue.toStringSync() : null;
           break;
         }
         case meta.type.name === 'Int' &&

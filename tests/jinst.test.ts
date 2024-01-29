@@ -157,6 +157,41 @@ describe('jinst', () => {
     expect(c[0].IS_GENERATEDCOLUMN).toBe('NO');
   });
 
+  it('should be able to insert a value using prepared statements', async () => {
+    const { conn } = connobj;
+    expect(conn).toBeDefined();
+
+    const pstatement = await conn.prepareStatement(
+      'insert into test (id) values(?)',
+    );
+    expect(pstatement).toBeDefined();
+
+    pstatement.setInt(1, 4);
+    pstatement.addBatch();
+    pstatement.setInt(1, 5);
+    pstatement.addBatch();
+
+    const rs = await pstatement.executeBatch();
+    expect(rs).toBeUndefined();
+  });
+
+  it('should be able to delete a value generated using prepared statements', async () => {
+    const { conn } = connobj;
+    expect(conn).toBeDefined();
+
+    const pstatement = await conn.prepareStatement(
+      'delete from test where id = ?',
+    );
+    expect(pstatement).toBeDefined();
+
+    pstatement.setInt(1, 4);
+    pstatement.addBatch();
+    pstatement.setInt(1, 5);
+    pstatement.addBatch();
+    const rs = await pstatement.executeBatch();
+    expect(rs).toBeUndefined();
+  });
+
   it('should be able to release the connection', async () => {
     // Release the connection)
 
