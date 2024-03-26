@@ -17,7 +17,6 @@ const config = {
   url: 'jdbc:sqlite:tests/sample.db',
   user: 'SA',
   password: '',
-  drivername: 'org.sqlite.JDBC',
 };
 
 let connobj: ConnObj;
@@ -83,7 +82,6 @@ describe('jinst', () => {
       ]);
     }
     const status = await db.status();
-    console.log(status);
     expect(status).toBeDefined();
   });
 

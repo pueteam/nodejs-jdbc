@@ -155,7 +155,7 @@ export class Pool {
 
         return resolve(connobj);
       }
-      const conn = getConnection(this.config.url, this.config.props);
+      const conn = getConnectionSync(this.config.url, this.config.props);
       const c = new Connection(conn);
       const connobj = {
         uuid: uuidv4(),

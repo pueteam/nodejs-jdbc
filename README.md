@@ -14,6 +14,9 @@ to follow a more modern way of doing things.
 
 ## Latests Versions
 
+- 0.1.5
+Fixes config with no driver name
+
 - 0.1.4
 Fixed Date, Time and Timestamp results
 
